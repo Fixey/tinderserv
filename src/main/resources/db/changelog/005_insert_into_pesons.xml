@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="mdunaev" id="5">
+        <sql>
+            insert into persons values
+            (1, 'Vassily Petrov','22.12.1993', 'MEN', 'WOMEN','WTF wtf'),
+            (2, 'Pjotr Vasechkin','21.12.1993', 'MEN', 'WOMEN','Lol lol'),
+            (3, 'Kate dfg','20.12.1993', 'WOMEN', 'MEN','Lol lol'),
+            (4, 'Ginger dfg ','25.12.1993', 'WOMEN', 'MEN','Lol lol');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

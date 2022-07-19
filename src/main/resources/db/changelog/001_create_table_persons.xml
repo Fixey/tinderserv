@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="mdunaev" id="1">
+        <sql>
+            create table if not exists persons
+            (
+            id integer primary key unique,
+            full_name varchar(200) not null,
+            birthday date not null,
+            gender varchar(10),
+            crush varchar(10),
+            description varchar(10000) not null,
+            created_at timestamp default now(),
+            updated_at timestamp default now()
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>
