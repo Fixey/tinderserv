@@ -1,13 +1,13 @@
-//package tinder.tindesrv;
-//
-//import org.junit.jupiter.api.Test;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
-//@SpringBootTest
-//class TindesrvApplicationTests {
-//
-//	@Test
-//	void contextLoads() {
-//	}
-//
-//}
+package tinder.tindesrv;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TindesrvApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

@@ -6,6 +6,7 @@ import tinder.tindesrv.entity.Person;
 import tinder.tindesrv.repository.PersonRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -78,5 +79,15 @@ public class PersonServiceImpl implements PersonService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Возвращает список клиентов по списку id
+     *
+     * @param idList список id
+     * @return List<Person> список клиентов по списку
+     */
+    public List<Person> getPersonsByListId(Set<Integer> idList) {
+        return personRepository.findByIdIn(idList);
     }
 }

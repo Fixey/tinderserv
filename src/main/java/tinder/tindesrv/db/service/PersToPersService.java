@@ -32,7 +32,7 @@ public interface PersToPersService {
      * в соответствии с переданным клиентом
      *
      * @param persToPers - клиент в соответсвии с которым нужно обновить данные
-     * @param id        - id клиента которого нужно обновить
+     * @param id         - id клиента которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
     boolean update(PersToPers persToPers, int id);

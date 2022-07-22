@@ -1,19 +1,18 @@
 package tinder.tindesrv.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "persons_to_persons")
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@Entity
+@ToString
+@Table(name = "persons_to_persons")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PersToPers {
     @Id
@@ -24,6 +23,9 @@ public class PersToPers {
     private int userId;
     @Column(name = "crush_id")
     private int crushId;
-    @Column(name = "likes")
-    private boolean likes;
+
+    public PersToPers(int userId, int crushId) {
+        this.userId = userId;
+        this.crushId = crushId;
+    }
 }

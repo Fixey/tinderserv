@@ -6,6 +6,7 @@ import tinder.tindesrv.entity.PersToPers;
 import tinder.tindesrv.repository.PersToPersRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PersToPersServiceImpl implements PersToPersService {
@@ -79,4 +80,59 @@ public class PersToPersServiceImpl implements PersToPersService {
         }
         return false;
     }
+
+    /**
+     * Возвращает id клиентов которые нравятся пользователю
+     *
+     * @param id - id пользователя
+     * @return - Set<Integer> клиентов
+     */
+    public Set<Integer> getCrushesIdByUserId(int id) {
+        return persToPersRepository.getDistinctCrushIdByUserId(id);
+    }
+
+
+    /**
+     * Возвращает id клиентов, которым понравился пользователь
+     *
+     * @param id - id пользователя
+     * @return - Set<Integer> клиентов
+     */
+    public Set<Integer> getUsersIdByCrushId(int id) {
+        return persToPersRepository.getDistinctUserIdByCrushId(id);
+    }
+
+    /**
+     * Возвращает id клиентов, которым понравился пользователь и пользователю понравился клиент.
+     *
+     * @param id - id пользователя
+     * @return - Set<Integer> клиентов
+     */
+    public Set<Integer> getMatchesByUserId(int id) {
+        return persToPersRepository.getMatchesId(id);
+    }
+
+    /**
+     * Существует уже лайк на клиента.
+     *
+     * @param userId  - id пользователя
+     * @param crushId - id клиента, который нравится
+     * @return - true если запись уже есть, иначе false
+     */
+    public Boolean existLikeByCrush(int userId, int crushId) {
+        List<PersToPers> persToPersList = persToPersRepository.getByUserIdAndCrushId(userId, crushId);
+        return persToPersList != null && !persToPersList.isEmpty();
+    }
+
+    /**
+     * Удалить связь клиента и пользователя
+     *
+     * @param userId  - id пользователя
+     * @param crushId - id клиента, который нравится
+     */
+    public void deleteLike(int userId, int crushId) {
+        persToPersRepository.deleteByUserIdAndCrushId(userId, crushId);
+    }
+
+
 }
