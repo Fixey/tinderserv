@@ -8,9 +8,9 @@ public interface PersToPersService {
     /**
      * Создает нового клиента
      *
-     * @param persToPes - клиент для создания
+     * @param persToPers - клиент для создания
      */
-    void create(PersToPers persToPes);
+    void create(PersToPers persToPers);
 
     /**
      * Возвращает список всех имеющихся клиентов
@@ -31,11 +31,11 @@ public interface PersToPersService {
      * Обновляет клиента с заданным ID,
      * в соответствии с переданным клиентом
      *
-     * @param persToPes - клиент в соответсвии с которым нужно обновить данные
+     * @param persToPers - клиент в соответсвии с которым нужно обновить данные
      * @param id        - id клиента которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    boolean update(PersToPers persToPes, int id);
+    boolean update(PersToPers persToPers, int id);
 
     /**
      * Удаляет клиента с заданным ID

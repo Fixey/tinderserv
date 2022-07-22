@@ -17,14 +17,13 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PersToPers {
     @Id
-    @SequenceGenerator(name = "personsToPersonsIdSeq", sequenceName = "persons_to_persons_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "personsToPersonsIdSeq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "par_id")
-    private int parId;
-    @Column(name = "par_id_crush")
-    private int parIdCrush;
+    @Column(name = "user_id")
+    private int userId;
+    @Column(name = "crush_id")
+    private int crushId;
     @Column(name = "likes")
     private boolean likes;
 }

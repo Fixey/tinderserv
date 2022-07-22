@@ -23,7 +23,7 @@ public class PersonController {
     }
 
     @PostMapping(value = "/persons")
-    public ResponseEntity<?> create(@RequestBody Person person) {
+    public ResponseEntity<?> createPerson(@RequestBody Person person) {
         personService.create(person);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
