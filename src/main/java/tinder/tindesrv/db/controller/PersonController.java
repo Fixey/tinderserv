@@ -12,6 +12,9 @@ import tinder.tindesrv.entity.Person;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * DB контроллер
+ */
 @RestController
 public class PersonController {
     private final PersonServiceImpl personService;
@@ -23,12 +26,23 @@ public class PersonController {
         this.persToPersService = persToPersService;
     }
 
+    /**
+     * Добаваляет клинета
+     *
+     * @param person клиент
+     * @return HttpStatus.CREATED если сохранился
+     */
     @PostMapping(value = "/persons")
     public ResponseEntity<?> createPerson(@RequestBody Person person) {
         personService.create(person);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * Возвращает всех клиентов
+     *
+     * @return List<Person> и HttpStatus.OK если все Ок, иначе NOT_FOUND
+     */
     @GetMapping(value = "/persons")
     public ResponseEntity<List<Person>> read() {
         final List<Person> persons = personService.readAll();
@@ -37,13 +51,31 @@ public class PersonController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    /**
+     * Возвращает клиента по id
+     *
+     * @param id клиента
+     * @return Person сущность клиента
+     */
     @GetMapping(value = "/persons/{id}")
     public ResponseEntity<Person> read(@PathVariable(name = "id") int id) {
         final Person person = personService.read(id);
         return person != null
                 ? new ResponseEntity<>(person, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Поиск. Найти клиента по его гендорным предпочтениям
+     *
+     * @param id клиента
+     * @return List<Person> список клиентов
+     */
+    @GetMapping(value = "/persons_crush/{Id}")
+    public ResponseEntity<List<Person>> searchPersonsByGender(@PathVariable(name = "id") int id) {
+        Person person = personService.read(id);
+        final List<Person> personList = personService.getPersonsByGender(person);
+        return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
     @PutMapping(value = "/persons/{id}")

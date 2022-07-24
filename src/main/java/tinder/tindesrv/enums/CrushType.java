@@ -1,6 +1,8 @@
 package tinder.tindesrv.enums;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum CrushType {
@@ -28,6 +30,16 @@ public enum CrushType {
             }
         }
         return null;
+    }
+
+    public static List<CrushType> valuesExceptCrushType(String crushType) {
+        List<CrushType> crushTypeList = new ArrayList<>();
+        for (CrushType crushType1 : values()) {
+            if (!crushType1.crushType.equals(crushType)) {
+                crushTypeList.add(crushType1);
+            }
+        }
+        return crushTypeList;
     }
 
     public static CrushType valueOfLabel(String label) {

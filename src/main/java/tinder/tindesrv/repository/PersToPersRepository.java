@@ -20,6 +20,7 @@ public interface PersToPersRepository extends JpaRepository<PersToPers, Integer>
     Set<Integer> getMatchesId(Integer userId);
 
     List<PersToPers> getByUserIdAndCrushId(Integer userId, Integer crushId);
+
     @Transactional
     void deleteByUserIdAndCrushId(Integer userId, Integer crushId);
 }
