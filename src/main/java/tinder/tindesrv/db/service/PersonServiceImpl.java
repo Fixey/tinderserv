@@ -9,7 +9,6 @@ import tinder.tindesrv.repository.PersonRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class PersonServiceImpl implements PersonService {

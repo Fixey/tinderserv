@@ -78,6 +78,12 @@ public class PersonController {
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
+    /**
+     * Изменение конкретного клиента
+     * @param id клиента
+     * @param person сущность клиента
+     * @return HttpStatus.OK - если был изменен. HttpStatus.NOT_MODIFIED - не был изменен
+     */
     @PutMapping(value = "/persons/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody Person person) {
         final boolean updated = personService.update(person, id);
