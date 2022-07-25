@@ -171,20 +171,6 @@ public class PersonController {
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
-//    /**
-//     * Создать зависимость между клиентами
-//     *
-//     * @param persToPers связь между клиентами
-//     * @return HttpStatus.OK - если все создалось
-//     */
-//    @PostMapping(value = "/crushes")
-//    public ResponseEntity<HttpStatus> createPersToPers(@RequestBody PersToPers persToPers) {
-//        if (!persToPersService.existLikeByCrush(persToPers)) {
-//            persToPersService.create(persToPers);
-//        }
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
     /**
      * Найти связь по id в таблице persons_to_persons
      *
