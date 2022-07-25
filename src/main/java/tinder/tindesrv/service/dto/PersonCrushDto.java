@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersToPersDto {
+public class PersonCrushDto {
     private Long id;
     private Long userId;
     private Long crushId;
 
-    public PersToPersDto(Long userId, Long crushId) {
+    public PersonCrushDto(Long userId, Long crushId) {
         this.userId = userId;
         this.crushId = crushId;
     }

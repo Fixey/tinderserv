@@ -4,29 +4,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tinder.tindesrv.service.dto.PersToPersDto;
-import tinder.tindesrv.service.impl.PersToPersServiceImpl;
+import tinder.tindesrv.service.dto.PersonCrushDto;
+import tinder.tindesrv.service.impl.PersonCrushServiceImpl;
 import tinder.tindesrv.service.impl.PersonServiceImpl;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class PersToPersController {
+public class PersonCrushController {
 
     private final PersonServiceImpl personService;
-    private final PersToPersServiceImpl persToPersService;
+    private final PersonCrushServiceImpl personCrushService;
 
     /**
      * Добавляет связь межеду клиентами
      *
-     * @param persToPers сущность интерсект таблицы
+     * @param personCrushDto сущность интерсект таблицы
      * @return HttpStatus.CREATED - если все создалось без ошибок
      */
     @PostMapping(value = "/crushes")
-    public ResponseEntity<?> createCrush(@RequestBody PersToPersDto persToPers) {
-        if (!persToPersService.existLikeByCrush(persToPers)) {
-            persToPersService.create(persToPers);
+    public ResponseEntity<?> createCrush(@RequestBody PersonCrushDto personCrushDto) {
+        if (!personCrushService.existLikeByCrush(personCrushDto)) {
+            personCrushService.create(personCrushDto);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -38,9 +38,9 @@ public class PersToPersController {
      */
     @GetMapping(value = "/crushes")
     public ResponseEntity<?> getCrushes() {
-        final List<PersToPersDto> persToPers = persToPersService.readAll();
-        return persToPers != null && !persToPers.isEmpty()
-                ? new ResponseEntity<>(persToPers, HttpStatus.OK)
+        final List<PersonCrushDto> personCrushDtos = personCrushService.readAll();
+        return personCrushDtos != null && !personCrushDtos.isEmpty()
+                ? new ResponseEntity<>(personCrushDtos, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -52,7 +52,7 @@ public class PersToPersController {
     @GetMapping(value = "/crushes/{userId}/{crushId}")
     public ResponseEntity<Boolean> existLikeByCrush(@PathVariable(name = "userId") Long userId,
                                                     @PathVariable(name = "crushId") Long crushId) {
-        return new ResponseEntity<>(persToPersService.existLikeByCrush(new PersToPersDto(userId, crushId)), HttpStatus.OK);
+        return new ResponseEntity<>(personCrushService.existLikeByCrush(new PersonCrushDto(userId, crushId)), HttpStatus.OK);
 
     }
 
@@ -60,26 +60,26 @@ public class PersToPersController {
      * Найти связь по id в таблице persons_to_persons
      *
      * @param id связи
-     * @return persToPers связи. HttpStatus.NOT_FOUND - если свзяи нет.
+     * @return personCrushDto связи. HttpStatus.NOT_FOUND - если свзяи нет.
      */
     @GetMapping(value = "/crushes/{id}")
-    public ResponseEntity<PersToPersDto> readCrush(@PathVariable(name = "id") Long id) {
-        final PersToPersDto persToPers = persToPersService.read(id);
-        return persToPers != null
-                ? new ResponseEntity<>(persToPers, HttpStatus.OK)
+    public ResponseEntity<PersonCrushDto> readCrush(@PathVariable(name = "id") Long id) {
+        final PersonCrushDto personCrushDto = personCrushService.read(id);
+        return personCrushDto != null
+                ? new ResponseEntity<>(personCrushDto, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     /**
      * Удаление связи в интресект таблице клиентов
      *
-     * @param persToPers сущность связей
+     * @param personCrushDto сущность связей
      * @return HttpStatus.OK - если все прошло без ошибок
      */
     @DeleteMapping(value = "/crushes")
-    public ResponseEntity<?> deleteCrush(@RequestBody PersToPersDto persToPers) {
-        if (persToPersService.existLikeByCrush(persToPers)) {
-            persToPersService.deleteLike(persToPers);
+    public ResponseEntity<?> deleteCrush(@RequestBody PersonCrushDto personCrushDto) {
+        if (personCrushService.existLikeByCrush(personCrushDto)) {
+            personCrushService.deleteLike(personCrushDto);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

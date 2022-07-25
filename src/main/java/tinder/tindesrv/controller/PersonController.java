@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tinder.tindesrv.service.dto.PersonDto;
-import tinder.tindesrv.service.impl.PersToPersServiceImpl;
+import tinder.tindesrv.service.impl.PersonCrushServiceImpl;
 import tinder.tindesrv.service.impl.PersonServiceImpl;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class PersonController {
     private final PersonServiceImpl personService;
-    private final PersToPersServiceImpl persToPersService;
+    private final PersonCrushServiceImpl personCrushService;
 
 
     /**
@@ -92,7 +92,7 @@ public class PersonController {
      */
     @GetMapping(value = "/personlove/{id}")
     public ResponseEntity<List<PersonDto>> getPersonsFalling(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = persToPersService.getCrushesIdByUserId(id);
+        final Set<Long> crushesIdList = personCrushService.getCrushesIdByUserId(id);
         final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
@@ -104,7 +104,7 @@ public class PersonController {
      */
     @GetMapping(value = "/loveperson/{id}")
     public ResponseEntity<List<PersonDto>> getWhoLikePerson(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = persToPersService.getUsersIdByCrushId(id);
+        final Set<Long> crushesIdList = personCrushService.getUsersIdByCrushId(id);
         final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
@@ -117,7 +117,7 @@ public class PersonController {
      */
     @GetMapping(value = "/matches/{id}")
     public ResponseEntity<List<PersonDto>> getMatches(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = persToPersService.getMatchesByUserId(id);
+        final Set<Long> crushesIdList = personCrushService.getMatchesByUserId(id);
         final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }

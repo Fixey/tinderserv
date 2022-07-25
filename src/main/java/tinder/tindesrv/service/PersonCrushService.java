@@ -1,23 +1,23 @@
 package tinder.tindesrv.service;
 
-import tinder.tindesrv.service.dto.PersToPersDto;
+import tinder.tindesrv.service.dto.PersonCrushDto;
 
 import java.util.List;
 
-public interface PersToPersService {
+public interface PersonCrushService {
     /**
      * Создает нового клиента
      *
-     * @param persToPers - клиент для создания
+     * @param personCrushDto - клиент для создания
      */
-    void create(PersToPersDto persToPers);
+    void create(PersonCrushDto personCrushDto);
 
     /**
      * Возвращает список всех имеющихся клиентов
      *
      * @return список клиентов
      */
-    List<PersToPersDto> readAll();
+    List<PersonCrushDto> readAll();
 
     /**
      * Возвращает клиента по его ID
@@ -25,7 +25,7 @@ public interface PersToPersService {
      * @param id - ID клиента
      * @return - объект клиента с заданным ID
      */
-    PersToPersDto read(Long id);
+    PersonCrushDto read(Long id);
 
     /**
      * Удаляет клиента с заданным ID
