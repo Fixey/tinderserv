@@ -1,23 +1,24 @@
-package tinder.tindesrv.db.service;
+package tinder.tindesrv.service;
 
-import tinder.tindesrv.entity.PersToPers;
+import tinder.tindesrv.entity.Person;
 
 import java.util.List;
 
-public interface PersToPersService {
+public interface PersonService {
     /**
      * Создает нового клиента
      *
-     * @param persToPers - клиент для создания
+     * @param person - клиент для создания
      */
-    void create(PersToPers persToPers);
+    void create(Person person);
 
     /**
      * Возвращает список всех имеющихся клиентов
      *
      * @return список клиентов
      */
-    List<PersToPers> readAll();
+    List<Person> readAll();
+
 
     /**
      * Возвращает клиента по его ID
@@ -25,17 +26,17 @@ public interface PersToPersService {
      * @param id - ID клиента
      * @return - объект клиента с заданным ID
      */
-    PersToPers read(int id);
+    Person read(int id);
 
     /**
      * Обновляет клиента с заданным ID,
      * в соответствии с переданным клиентом
      *
-     * @param persToPers - клиент в соответсвии с которым нужно обновить данные
-     * @param id         - id клиента которого нужно обновить
+     * @param person - клиент в соответсвии с которым нужно обновить данные
+     * @param id     - id клиента которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    boolean update(PersToPers persToPers, int id);
+    boolean update(Person person, int id);
 
     /**
      * Удаляет клиента с заданным ID

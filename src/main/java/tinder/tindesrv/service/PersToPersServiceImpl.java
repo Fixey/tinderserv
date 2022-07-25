@@ -1,4 +1,4 @@
-package tinder.tindesrv.db.service;
+package tinder.tindesrv.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,7 +88,7 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @return - Set<Integer> клиентов
      */
     public Set<Integer> getCrushesIdByUserId(int id) {
-        return persToPersRepository.getDistinctCrushIdByUserId(id);
+        return persToPersRepository.getCrushIdByUserId(id);
     }
 
 
@@ -99,7 +99,7 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @return - Set<Integer> клиентов
      */
     public Set<Integer> getUsersIdByCrushId(int id) {
-        return persToPersRepository.getDistinctUserIdByCrushId(id);
+        return persToPersRepository.getUserIdByCrushId(id);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PersToPersServiceImpl implements PersToPersService {
     }
 
     /**
-     * Существует уже лайк на клиента.
+     * Существует уже лайк на клиенте?
      *
      * @param persToPers - связь между клиентами
      * @return - true если запись уже есть, иначе false
@@ -131,6 +131,4 @@ public class PersToPersServiceImpl implements PersToPersService {
     public void deleteLike(PersToPers persToPers) {
         persToPersRepository.deleteByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
     }
-
-
 }
