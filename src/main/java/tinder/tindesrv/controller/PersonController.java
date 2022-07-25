@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tinder.tindesrv.service.PersToPersServiceImpl;
-import tinder.tindesrv.service.PersonServiceImpl;
 import tinder.tindesrv.entity.PersToPers;
 import tinder.tindesrv.entity.Person;
+import tinder.tindesrv.service.PersToPersServiceImpl;
+import tinder.tindesrv.service.PersonServiceImpl;
 
 import java.util.List;
 import java.util.Set;
@@ -144,6 +144,19 @@ public class PersonController {
         final Set<Integer> crushesIdList = persToPersService.getCrushesIdByUserId(id);
         final List<Person> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
+    }
+
+    /**
+     * Любимцы. Если ли у человека лайк
+     *
+     * @return ResponseEntity<List < Person>> список людей кого любит пользователь
+     */
+    @GetMapping(value = "/crushes/{userId}/{crushId}")
+    public ResponseEntity<Boolean> existLikeByCrush(@PathVariable(name = "userId") int userId,
+                                                    @PathVariable(name = "crushId") int crushId) {
+        final PersToPers persToPers = new PersToPers(userId, crushId);
+        return new ResponseEntity<>(persToPersService.existLikeByCrush(persToPers), HttpStatus.OK);
+
     }
 
     /**
