@@ -71,7 +71,7 @@ public class PersonController {
      * @param id клиента
      * @return List<Person> список клиентов
      */
-    @GetMapping(value = "/persons_crush/{Id}")
+    @GetMapping(value = "/persons_crush/{id}")
     public ResponseEntity<List<Person>> searchPersonsByGender(@PathVariable(name = "id") int id) {
         Person person = personService.read(id);
         final List<Person> personList = personService.getPersonsByGender(person);
@@ -80,7 +80,8 @@ public class PersonController {
 
     /**
      * Изменение конкретного клиента
-     * @param id клиента
+     *
+     * @param id     клиента
      * @param person сущность клиента
      * @return HttpStatus.OK - если был изменен. HttpStatus.NOT_MODIFIED - не был изменен
      */
@@ -92,6 +93,12 @@ public class PersonController {
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
+    /**
+     * Удаление клиента
+     *
+     * @param id клиента
+     * @return HttpStatus.OK - если удалился, иначе HttpStatus.NOT_MODIFIED
+     */
     @DeleteMapping(value = "/persons/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") int id) {
         final boolean deleted = personService.delete(id);
@@ -100,14 +107,25 @@ public class PersonController {
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
+    /**
+     * Добавляет связь межеду клиентами
+     *
+     * @param persToPers сущность интерсект таблицы
+     * @return HttpStatus.CREATED - если все создалось без ошибок
+     */
     @PostMapping(value = "/crushes")
     public ResponseEntity<?> createCrush(@RequestBody PersToPers persToPers) {
-        if (!persToPersService.existLikeByCrush(persToPers.getUserId(), persToPers.getCrushId())) {
+        if (!persToPersService.existLikeByCrush(persToPers)) {
             persToPersService.create(persToPers);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * Вернуть все связи интерсект таблицы клиентов
+     *
+     * @return List<Person> сущности клинетов
+     */
     @GetMapping(value = "/crushes")
     public ResponseEntity<?> getCrushes() {
         final List<PersToPers> persToPers = persToPersService.readAll();
@@ -117,7 +135,7 @@ public class PersonController {
     }
 
     /**
-     * Кого любит пользователь
+     * Любимцы. Список клиентов, кого ищет пользователь
      *
      * @return ResponseEntity<List < Person>> список людей кого любит пользователь
      */
@@ -140,6 +158,12 @@ public class PersonController {
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
+    /**
+     * Любимцы. Совпадения по поиску клиентов.
+     *
+     * @param id клиента
+     * @return Список людей с которым произошел мэтч
+     */
     @GetMapping(value = "/matches/{id}")
     public ResponseEntity<List<Person>> getMatches(@PathVariable(name = "id") int id) {
         final Set<Integer> crushesIdList = persToPersService.getMatchesByUserId(id);
@@ -147,15 +171,26 @@ public class PersonController {
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/crushes/{id}/{crushId}")
-    public ResponseEntity<HttpStatus> getMatches(@PathVariable(name = "id") int id,
-                                                 @PathVariable(name = "crushId") int crushId) {
-        if (!persToPersService.existLikeByCrush(id, crushId)) {
-            persToPersService.create(new PersToPers(id, crushId));
+    /**
+     * Создать зависимость между клиентами
+     *
+     * @param persToPers связь между клиентами
+     * @return HttpStatus.OK - если все создалось
+     */
+    @PostMapping(value = "/crushes")
+    public ResponseEntity<HttpStatus> createPestToPers(@RequestBody PersToPers persToPers) {
+        if (!persToPersService.existLikeByCrush(persToPers)) {
+            persToPersService.create(persToPers);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Найти связь по id в таблице persons_to_persons
+     *
+     * @param id связи
+     * @return persToPers связи. HttpStatus.NOT_FOUND - если свзяи нет.
+     */
     @GetMapping(value = "/crushes/{id}")
     public ResponseEntity<PersToPers> readCrush(@PathVariable(name = "id") int id) {
         final PersToPers persToPers = persToPersService.read(id);
@@ -164,20 +199,16 @@ public class PersonController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(value = "/crushes/{id}")
-    public ResponseEntity<?> updateCrush(@PathVariable(name = "id") int id, @RequestBody PersToPers persToPers) {
-        final boolean updated = persToPersService.update(persToPers, id);
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
+    /**
+     * Удаление связи в интресект таблице клиентов
+     *
+     * @param persToPers сущность связей
+     * @return HttpStatus.OK - если все прошло без ошибок
+     */
     @DeleteMapping(value = "/crushes")
     public ResponseEntity<?> deleteCrush(@RequestBody PersToPers persToPers) {
-        final Integer id = persToPers.getUserId();
-        final Integer crushId = persToPers.getCrushId();
-        if (persToPersService.existLikeByCrush(id, crushId)) {
-            persToPersService.deleteLike(id, crushId);
+        if (persToPersService.existLikeByCrush(persToPers)) {
+            persToPersService.deleteLike(persToPers);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -115,23 +115,21 @@ public class PersToPersServiceImpl implements PersToPersService {
     /**
      * Существует уже лайк на клиента.
      *
-     * @param userId  - id пользователя
-     * @param crushId - id клиента, который нравится
+     * @param persToPers - связь между клиентами
      * @return - true если запись уже есть, иначе false
      */
-    public Boolean existLikeByCrush(int userId, int crushId) {
-        List<PersToPers> persToPersList = persToPersRepository.getByUserIdAndCrushId(userId, crushId);
+    public Boolean existLikeByCrush(PersToPers persToPers) {
+        List<PersToPers> persToPersList = persToPersRepository.getByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
         return persToPersList != null && !persToPersList.isEmpty();
     }
 
     /**
      * Удалить связь клиента и пользователя
      *
-     * @param userId  - id пользователя
-     * @param crushId - id клиента, который нравится
+     * @param persToPers - сущность связи клиентов
      */
-    public void deleteLike(int userId, int crushId) {
-        persToPersRepository.deleteByUserIdAndCrushId(userId, crushId);
+    public void deleteLike(PersToPers persToPers) {
+        persToPersRepository.deleteByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
     }
 
 
