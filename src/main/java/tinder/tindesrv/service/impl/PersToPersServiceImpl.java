@@ -1,9 +1,10 @@
-package tinder.tindesrv.service;
+package tinder.tindesrv.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tinder.tindesrv.entity.PersToPers;
 import tinder.tindesrv.repository.PersToPersRepository;
+import tinder.tindesrv.service.PersToPersService;
 
 import java.util.List;
 import java.util.Set;
@@ -119,8 +120,7 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @return - true если запись уже есть, иначе false
      */
     public Boolean existLikeByCrush(PersToPers persToPers) {
-        List<PersToPers> persToPersList = persToPersRepository.getByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
-        return persToPersList != null && !persToPersList.isEmpty();
+        return persToPersRepository.existsByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
     }
 
     /**

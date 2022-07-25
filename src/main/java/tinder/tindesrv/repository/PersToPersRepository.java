@@ -38,13 +38,22 @@ public interface PersToPersRepository extends JpaRepository<PersToPers, Integer>
     Set<Integer> getMatchesId(Integer userId);
 
     /**
-     * Поиск по user id и crush id
+     * Найти всех контактов по user id или crush id
      *
      * @param userId  id клиента
      * @param crushId id любимца
      * @return List<PersToPers> лист связей
      */
-    List<PersToPers> getByUserIdAndCrushId(Integer userId, Integer crushId);
+    List<PersToPers> findDistinctByUserIdOrCrushId(int userId, int crushId);
+
+    /**
+     * Есть ли связь между клиентом и любимцем
+     *
+     * @param userId  id клиента
+     * @param crushId id любимца
+     * @return true - если есть, false - если нет
+     */
+    boolean existsByUserIdAndCrushId(int userId, int crushId);
 
     /**
      * Удаление связи между клиентом и любимцем

@@ -1,31 +1,44 @@
-package tinder.tindesrv.service;
+package tinder.tindesrv.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tinder.tindesrv.entity.Person;
-import tinder.tindesrv.enums.CrushType;
+import tinder.tindesrv.enums.CrushTypeEnum;
 import tinder.tindesrv.repository.PersonRepository;
+import tinder.tindesrv.service.PersonService;
+import tinder.tindesrv.service.dto.PersonDto;
+import tinder.tindesrv.service.mapping.PersonMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
     @Autowired
     private final PersonRepository personRepository;
+    private final PersonMapper personMapper;
 
-    public PersonServiceImpl(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
 
     /**
      * Создает нового клиента
      *
-     * @param person - клиент для создания
+     * @param personDto - клиент для создания
      */
     @Override
-    public void create(Person person) {
+    public void create(PersonDto personDto) {
+        Person person = new Person()
+                .builder()
+                .id(personDto.getId())
+                .fullName(personDto.getFullName())
+                .gender(personDto.getGender())
+                .crush(personDto.getCrush())
+                .birthday(personDto.getBirthday())
+                .description(personDto.getDescription())
+                .build();
         personRepository.save(person);
     }
 
@@ -35,8 +48,11 @@ public class PersonServiceImpl implements PersonService {
      * @return список клиентов
      */
     @Override
-    public List<Person> readAll() {
-        return personRepository.findAll();
+    public List<PersonDto> readAll() {
+        return personRepository.findAll()
+                .stream()
+                .map(personMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -46,26 +62,11 @@ public class PersonServiceImpl implements PersonService {
      * @return - объект клиента с заданным ID
      */
     @Override
-    public Person read(int id) {
-        return personRepository.findById(id).orElseThrow(RuntimeException::new);
-    }
-
-    /**
-     * Обновляет клиента с заданным ID,
-     * в соответствии с переданным клиентом
-     *
-     * @param person - клиент в соответсвии с которым нужно обновить данные
-     * @param id     - id клиента которого нужно обновить
-     * @return - true если данные были обновлены, иначе false
-     */
-    @Override
-    public boolean update(Person person, int id) {
-        if (personRepository.existsById(id)) {
-            person.setId(id);
-            personRepository.save(person);
-            return true;
-        }
-        return false;
+    public PersonDto read(int id) {
+        return personRepository
+                .findById(id)
+                .map(personMapper::toDto)
+                .orElseThrow(RuntimeException::new);
     }
 
     /**
@@ -89,8 +90,12 @@ public class PersonServiceImpl implements PersonService {
      * @param idList список id клиентов
      * @return List<Person> список клиентов по списку
      */
-    public List<Person> getPersonsByListId(Set<Integer> idList) {
-        return personRepository.findByIdIn(idList);
+    public List<PersonDto> getPersonsByListId(Set<Integer> idList) {
+        return personRepository
+                .findByIdIn(idList)
+                .stream()
+                .map(personMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -99,15 +104,19 @@ public class PersonServiceImpl implements PersonService {
      * @param person пол по которому осуществляется поиск
      * @return List<Person> список клиентов по списку
      */
-    public List<Person> getPersonsByGender(Person person) {
+    public List<PersonDto> getPersonsByGender(PersonDto person) {
         List<String> crushTypeList = new ArrayList<>();
-        CrushType personCrush = CrushType.valueOf(person.getCrush());
-        if (personCrush.equals(CrushType.ALL)) {
-            crushTypeList.add(CrushType.MEN.name());
-            crushTypeList.add(CrushType.WOMEN.name());
+        CrushTypeEnum personCrush = CrushTypeEnum.valueOf(person.getCrush());
+        if (personCrush.equals(CrushTypeEnum.ALL)) {
+            crushTypeList.add(CrushTypeEnum.MEN.name());
+            crushTypeList.add(CrushTypeEnum.WOMEN.name());
         } else {
             crushTypeList.add(person.getCrush());
         }
-        return personRepository.findByGender(crushTypeList, person.getGender());
+        return personRepository
+                .findByGender(crushTypeList, person.getGender())
+                .stream()
+                .map(personMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

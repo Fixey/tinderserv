@@ -1,6 +1,6 @@
 package tinder.tindesrv.enums;
 
-public enum CrushType {
+public enum CrushTypeEnum {
     MEN,
     WOMEN,
     ALL

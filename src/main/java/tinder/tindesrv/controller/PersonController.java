@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tinder.tindesrv.entity.PersToPers;
-import tinder.tindesrv.entity.Person;
-import tinder.tindesrv.service.PersToPersServiceImpl;
-import tinder.tindesrv.service.PersonServiceImpl;
+import tinder.tindesrv.service.dto.PersonDto;
+import tinder.tindesrv.service.impl.PersToPersServiceImpl;
+import tinder.tindesrv.service.impl.PersonServiceImpl;
 
 import java.util.List;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class PersonController {
      * @return HttpStatus.CREATED если сохранился
      */
     @PostMapping(value = "/persons")
-    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+    public ResponseEntity<?> createPerson(@RequestBody PersonDto person) {
         personService.create(person);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -44,8 +44,8 @@ public class PersonController {
      * @return List<Person> и HttpStatus.OK если все Ок, иначе NOT_FOUND
      */
     @GetMapping(value = "/persons")
-    public ResponseEntity<List<Person>> read() {
-        final List<Person> persons = personService.readAll();
+    public ResponseEntity<List<PersonDto>> read() {
+        final List<PersonDto> persons = personService.readAll();
         return persons != null && !persons.isEmpty()
                 ? new ResponseEntity<>(persons, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -58,8 +58,8 @@ public class PersonController {
      * @return Person сущность клиента
      */
     @GetMapping(value = "/persons/{id}")
-    public ResponseEntity<Person> read(@PathVariable(name = "id") int id) {
-        final Person person = personService.read(id);
+    public ResponseEntity<PersonDto> read(@PathVariable(name = "id") int id) {
+        final PersonDto person = personService.read(id);
         return person != null
                 ? new ResponseEntity<>(person, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -72,25 +72,10 @@ public class PersonController {
      * @return List<Person> список клиентов
      */
     @GetMapping(value = "/persons_crush/{id}")
-    public ResponseEntity<List<Person>> searchPersonsByGender(@PathVariable(name = "id") int id) {
-        Person person = personService.read(id);
-        final List<Person> personList = personService.getPersonsByGender(person);
+    public ResponseEntity<List<PersonDto>> searchPersonsByGender(@PathVariable(name = "id") int id) {
+        PersonDto person = personService.read(id);
+        final List<PersonDto> personList = personService.getPersonsByGender(person);
         return new ResponseEntity<>(personList, HttpStatus.OK);
-    }
-
-    /**
-     * Изменение конкретного клиента
-     *
-     * @param id     клиента
-     * @param person сущность клиента
-     * @return HttpStatus.OK - если был изменен. HttpStatus.NOT_MODIFIED - не был изменен
-     */
-    @PutMapping(value = "/persons/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody Person person) {
-        final boolean updated = personService.update(person, id);
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
     /**
@@ -140,9 +125,9 @@ public class PersonController {
      * @return ResponseEntity<List < Person>> список людей кого любит пользователь
      */
     @GetMapping(value = "/personlove/{id}")
-    public ResponseEntity<List<Person>> getPersonsFalling(@PathVariable(name = "id") int id) {
+    public ResponseEntity<List<PersonDto>> getPersonsFalling(@PathVariable(name = "id") int id) {
         final Set<Integer> crushesIdList = persToPersService.getCrushesIdByUserId(id);
-        final List<Person> personList = personService.getPersonsByListId(crushesIdList);
+        final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
@@ -165,9 +150,9 @@ public class PersonController {
      * @return ResponseEntity<List < Person>> список людей кому нравится пользователь
      */
     @GetMapping(value = "/loveperson/{id}")
-    public ResponseEntity<List<Person>> getWhoLikePerson(@PathVariable(name = "id") int id) {
+    public ResponseEntity<List<PersonDto>> getWhoLikePerson(@PathVariable(name = "id") int id) {
         final Set<Integer> crushesIdList = persToPersService.getUsersIdByCrushId(id);
-        final List<Person> personList = personService.getPersonsByListId(crushesIdList);
+        final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
@@ -178,9 +163,9 @@ public class PersonController {
      * @return Список людей с которым произошел мэтч
      */
     @GetMapping(value = "/matches/{id}")
-    public ResponseEntity<List<Person>> getMatches(@PathVariable(name = "id") int id) {
+    public ResponseEntity<List<PersonDto>> getMatches(@PathVariable(name = "id") int id) {
         final Set<Integer> crushesIdList = persToPersService.getMatchesByUserId(id);
-        final List<Person> personList = personService.getPersonsByListId(crushesIdList);
+        final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 

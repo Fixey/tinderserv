@@ -12,7 +12,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
      * Поиск нескольких клиентов по id
      *
      * @param idSet Set<Integer> сет id клиентов
-     * @return List<Person> список клиентов
+     * @return List<PersonDto> список клиентов
      */
     List<Person> findByIdIn(Set<Integer> idSet);
 
@@ -21,7 +21,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
      *
      * @param crushTypeList Лист полов клиентов, которых ищет пользователь
      * @param crushType     тип клиентов, которых ищут клиенты
-     * @return List<Person> список клиентов
+     * @return List<PersonDto> список клиентов
      */
     @Query(value = "select p from Person p where p.gender in ?1 " +
             "and (p.crush = ?2 or p.crush = 'ALL')")
