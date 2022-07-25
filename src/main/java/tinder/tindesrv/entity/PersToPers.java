@@ -17,14 +17,11 @@ import javax.persistence.*;
 public class PersToPers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-    @Column(name = "user_id")
-    private int userId;
-    @Column(name = "crush_id")
-    private int crushId;
+    private Long id;
+    private Long userId;
+    private Long crushId;
 
-    public PersToPers(int userId, int crushId) {
+    public PersToPers(Long userId, Long crushId) {
         this.userId = userId;
         this.crushId = crushId;
     }

@@ -5,17 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonDto {
+public class PersToPersDto {
     private Long id;
-    private String fullName;
-    private LocalDate birthday;
-    private String crush;
-    private String gender;
-    private String description;
+    private Long userId;
+    private Long crushId;
+
+    public PersToPersDto(Long userId, Long crushId) {
+        this.userId = userId;
+        this.crushId = crushId;
+    }
 }

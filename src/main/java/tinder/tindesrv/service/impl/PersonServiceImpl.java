@@ -62,7 +62,7 @@ public class PersonServiceImpl implements PersonService {
      * @return - объект клиента с заданным ID
      */
     @Override
-    public PersonDto read(int id) {
+    public PersonDto read(Long id) {
         return personRepository
                 .findById(id)
                 .map(personMapper::toDto)
@@ -76,7 +76,7 @@ public class PersonServiceImpl implements PersonService {
      * @return - true если клиент был удален, иначе false
      */
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         if (personRepository.existsById(id)) {
             personRepository.deleteById(id);
             return true;
@@ -90,7 +90,7 @@ public class PersonServiceImpl implements PersonService {
      * @param idList список id клиентов
      * @return List<Person> список клиентов по списку
      */
-    public List<PersonDto> getPersonsByListId(Set<Integer> idList) {
+    public List<PersonDto> getPersonsByListId(Set<Long> idList) {
         return personRepository
                 .findByIdIn(idList)
                 .stream()

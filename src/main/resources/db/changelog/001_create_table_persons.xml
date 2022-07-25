@@ -8,14 +8,23 @@
         <sql>
             create table if not exists persons
             (
-            id integer primary key unique,
+            id bigint primary key unique,
             full_name varchar(200) not null,
             birthday date not null,
             gender varchar(10),
             crush varchar(10),
-            description varchar(10000) not null,
+            description varchar not null,
             created_at timestamp default now(),
             updated_at timestamp default now()
+            );
+            create table if not exists persons_to_persons
+            (
+            id serial primary key unique,
+            user_id bigint not null,
+            crush_id bigint not null,
+            created_at timestamp default now(),
+            updated_at timestamp default now(),
+            UNIQUE (user_id, crush_id)
             );
         </sql>
     </changeSet>

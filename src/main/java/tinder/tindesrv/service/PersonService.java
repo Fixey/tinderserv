@@ -26,7 +26,7 @@ public interface PersonService {
      * @param id - ID клиента
      * @return - объект клиента с заданным ID
      */
-    PersonDto read(int id);
+    PersonDto read(Long id);
 
     /**
      * Удаляет клиента с заданным ID
@@ -34,5 +34,5 @@ public interface PersonService {
      * @param id - id клиента, которого нужно удалить
      * @return - true если клиент был удален, иначе false
      */
-    boolean delete(int id);
+    boolean delete(Long id);
 }

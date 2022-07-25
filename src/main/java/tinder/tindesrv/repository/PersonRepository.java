@@ -7,14 +7,14 @@ import tinder.tindesrv.entity.Person;
 import java.util.List;
 import java.util.Set;
 
-public interface PersonRepository extends JpaRepository<Person, Integer> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
     /**
      * Поиск нескольких клиентов по id
      *
-     * @param idSet Set<Integer> сет id клиентов
+     * @param idSet Set<Long> сет id клиентов
      * @return List<PersonDto> список клиентов
      */
-    List<Person> findByIdIn(Set<Integer> idSet);
+    List<Person> findByIdIn(Set<Long> idSet);
 
     /**
      * Поиск связей клиентов по гендерному признаку

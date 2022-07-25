@@ -1,30 +1,38 @@
 package tinder.tindesrv.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tinder.tindesrv.entity.PersToPers;
 import tinder.tindesrv.repository.PersToPersRepository;
 import tinder.tindesrv.service.PersToPersService;
+import tinder.tindesrv.service.dto.PersToPersDto;
+import tinder.tindesrv.service.mapping.PersToPersMapper;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PersToPersServiceImpl implements PersToPersService {
     @Autowired
     private final PersToPersRepository persToPersRepository;
-
-    public PersToPersServiceImpl(PersToPersRepository persToPersRepository) {
-        this.persToPersRepository = persToPersRepository;
-    }
+    private final PersToPersMapper mapper;
 
     /**
      * Создает нового клиента
      *
-     * @param persToPers - клиент для создания
+     * @param persToPersDto - клиент для создания
      */
     @Override
-    public void create(PersToPers persToPers) {
+    public void create(PersToPersDto persToPersDto) {
+        PersToPers persToPers = new PersToPers()
+                .builder()
+                .id(persToPersDto.getId())
+                .crushId(persToPersDto.getCrushId())
+                .userId(persToPersDto.getCrushId())
+                .build();
         persToPersRepository.save(persToPers);
     }
 
@@ -34,8 +42,11 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @return список клиентов
      */
     @Override
-    public List<PersToPers> readAll() {
-        return persToPersRepository.findAll();
+    public List<PersToPersDto> readAll() {
+        return persToPersRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -45,26 +56,11 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @return - объект клиента с заданным ID
      */
     @Override
-    public PersToPers read(int id) {
-        return persToPersRepository.findById(id).orElseThrow(RuntimeException::new);
-    }
-
-    /**
-     * Обновляет клиента с заданным ID,
-     * в соответствии с переданным клиентом
-     *
-     * @param persToPers - клиент в соответсвии с которым нужно обновить данные
-     * @param id         - id клиента которого нужно обновить
-     * @return - true если данные были обновлены, иначе false
-     */
-    @Override
-    public boolean update(PersToPers persToPers, int id) {
-        if (persToPersRepository.existsById(id)) {
-            persToPers.setId(id);
-            persToPersRepository.save(persToPers);
-            return true;
-        }
-        return false;
+    public PersToPersDto read(Long id) {
+        return persToPersRepository
+                .findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(RuntimeException::new);
     }
 
     /**
@@ -74,7 +70,7 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @return - true если клиент был удален, иначе false
      */
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         if (persToPersRepository.existsById(id)) {
             persToPersRepository.deleteById(id);
             return true;
@@ -86,9 +82,9 @@ public class PersToPersServiceImpl implements PersToPersService {
      * Возвращает id клиентов которые нравятся пользователю
      *
      * @param id - id пользователя
-     * @return - Set<Integer> клиентов
+     * @return - Set<Long> клиентов
      */
-    public Set<Integer> getCrushesIdByUserId(int id) {
+    public Set<Long> getCrushesIdByUserId(Long id) {
         return persToPersRepository.getCrushIdByUserId(id);
     }
 
@@ -97,9 +93,9 @@ public class PersToPersServiceImpl implements PersToPersService {
      * Возвращает id клиентов, которым понравился пользователь
      *
      * @param id - id пользователя
-     * @return - Set<Integer> клиентов
+     * @return - Set<Long> клиентов
      */
-    public Set<Integer> getUsersIdByCrushId(int id) {
+    public Set<Long> getUsersIdByCrushId(Long id) {
         return persToPersRepository.getUserIdByCrushId(id);
     }
 
@@ -107,9 +103,9 @@ public class PersToPersServiceImpl implements PersToPersService {
      * Возвращает id клиентов, которым понравился пользователь и пользователю понравился клиент.
      *
      * @param id - id пользователя
-     * @return - Set<Integer> клиентов
+     * @return - Set<Long> клиентов
      */
-    public Set<Integer> getMatchesByUserId(int id) {
+    public Set<Long> getMatchesByUserId(Long id) {
         return persToPersRepository.getMatchesId(id);
     }
 
@@ -119,7 +115,7 @@ public class PersToPersServiceImpl implements PersToPersService {
      * @param persToPers - связь между клиентами
      * @return - true если запись уже есть, иначе false
      */
-    public Boolean existLikeByCrush(PersToPers persToPers) {
+    public Boolean existLikeByCrush(PersToPersDto persToPers) {
         return persToPersRepository.existsByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
     }
 
@@ -128,7 +124,7 @@ public class PersToPersServiceImpl implements PersToPersService {
      *
      * @param persToPers - сущность связи клиентов
      */
-    public void deleteLike(PersToPers persToPers) {
+    public void deleteLike(PersToPersDto persToPers) {
         persToPersRepository.deleteByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
     }
 }
