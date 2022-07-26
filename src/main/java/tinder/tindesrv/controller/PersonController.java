@@ -128,4 +128,16 @@ public class PersonController {
         final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
+
+    /**
+     * Любимцы. Список любимцев, которые нравились клиенту, выбрали клиента или был взаимный выбор.
+     *
+     * @param userId клиента
+     * @return Список любимцев
+     */
+    @GetMapping(value = "/lovers/{id}")
+    public ResponseEntity<List<PersonDto>> getPersonsForLovers(@PathVariable(name = "id") Long userId) {
+        final List<PersonDto> personList = personService.getPersonsForLovers(userId);
+        return new ResponseEntity<>(personList, HttpStatus.OK);
+    }
 }

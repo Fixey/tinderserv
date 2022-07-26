@@ -15,7 +15,6 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param userId id клиента
      * @return Set<Integer> id любимцев
      */
-    //  @Query(value = "select p.crushId from PersonCrush p where p.userId=?1")
     Set<PersonCrush> getCrushIdByUserId(Long userId);
 
     /**
@@ -24,7 +23,6 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param crushId id любимца
      * @return Set<Integer> id клиентов
      */
-    // @Query(value = "select p.userId from PersonCrush p where p.crushId=?1")
     Set<PersonCrush> getUserIdByCrushId(Long crushId);
 
     /**
@@ -33,9 +31,11 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param userId id клинта
      * @return Set<Integer> id клиентов
      */
-    @Query(value = "select p1.crushId from PersonCrush p1, PersonCrush p2 where p1.userId=p2.crushId " +
-            "and p2.userId=p1.crushId and p1.userId=?1")
+    @Query(value = "SELECT p1.crushId FROM PersonCrush p1, PersonCrush p2 WHERE p1.userId=p2.crushId " +
+            "AND p2.userId=p1.crushId AND p1.userId=?1")
     Set<Long> getMatchesId(Long userId);
+
+
 
     /**
      * Найти всех контактов по user id или crush id
@@ -44,7 +44,9 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param crushId id любимца
      * @return List<PersonCrush> лист связей
      */
-    List<PersonCrush> findDistinctByUserIdOrCrushId(Long userId, Long crushId);
+    List<PersonCrush> findByUserIdOrCrushId(Long userId, Long crushId);
+
+    List<PersonCrush> findByUserIdAndIdNotOrCrushId(Long userId, Long id, Long crushId);
 
     /**
      * Есть ли связь между клиентом и любимцем

@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tinder.tindesrv.entity.Person;
+import tinder.tindesrv.entity.PersonCrush;
 import tinder.tindesrv.enums.CrushTypeEnum;
+import tinder.tindesrv.repository.PersonCrushRepository;
 import tinder.tindesrv.repository.PersonRepository;
 import tinder.tindesrv.service.PersonService;
 import tinder.tindesrv.service.dto.PersonDto;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 public class PersonServiceImpl implements PersonService {
     @Autowired
     private final PersonRepository personRepository;
+    @Autowired
+    private final PersonCrushRepository personCrushRepository;
     private final PersonMapper personMapper;
 
 
@@ -118,5 +122,22 @@ public class PersonServiceImpl implements PersonService {
                 .stream()
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Список любимцев, которые нравились клиенту, выбрали клиента или был взаимный выбор.
+     *
+     * @param userId клиента
+     * @return Список любимцев
+     */
+    public List<PersonDto> getPersonsForLovers(Long userId) {
+        Set<Long> usersSet = personCrushRepository.findByUserIdAndIdNotOrCrushId(userId, userId, userId)
+                .stream().map(PersonCrush::getId).collect(Collectors.toSet());
+        System.out.println(usersSet);
+        return personRepository.findByIdIn(usersSet)
+                .stream()
+                .map(personMapper::toDto)
+                .collect(Collectors.toList());
+
     }
 }
