@@ -34,7 +34,7 @@ public class PersonCrushController {
     /**
      * Вернуть все связи интерсект таблицы клиентов
      *
-     * @return List<Person> сущности клинетов
+     * @return List<personCrushDtos> сущности клинетов
      */
     @GetMapping(value = "/crushes")
     public ResponseEntity<?> getCrushes() {

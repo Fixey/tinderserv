@@ -15,8 +15,8 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param userId id клиента
      * @return Set<Integer> id любимцев
      */
-    @Query(value = "select p.crushId from PersonCrush p where p.userId=?1")
-    Set<Long> getCrushIdByUserId(Long userId);
+    //  @Query(value = "select p.crushId from PersonCrush p where p.userId=?1")
+    Set<PersonCrush> getCrushIdByUserId(Long userId);
 
     /**
      * Возвращает список клиентов найденных по crush id
@@ -24,8 +24,8 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param crushId id любимца
      * @return Set<Integer> id клиентов
      */
-    @Query(value = "select p.userId from PersonCrush p where p.crushId=?1")
-    Set<Long> getUserIdByCrushId(Long crushId);
+    // @Query(value = "select p.userId from PersonCrush p where p.crushId=?1")
+    Set<PersonCrush> getUserIdByCrushId(Long crushId);
 
     /**
      * Возвращает список клиентов с которым был мэтч

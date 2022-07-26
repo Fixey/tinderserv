@@ -10,6 +10,7 @@ import tinder.tindesrv.service.impl.PersonServiceImpl;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * DB контроллер
@@ -92,7 +93,10 @@ public class PersonController {
      */
     @GetMapping(value = "/personlove/{id}")
     public ResponseEntity<List<PersonDto>> getPersonsFalling(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = personCrushService.getCrushesIdByUserId(id);
+        final Set<Long> crushesIdList = personCrushService.getCrushesIdByUserId(id)
+                .stream()
+                .map(personCrush -> personCrush.getCrushId())
+                .collect(Collectors.toSet());
         final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
@@ -104,7 +108,10 @@ public class PersonController {
      */
     @GetMapping(value = "/loveperson/{id}")
     public ResponseEntity<List<PersonDto>> getWhoLikePerson(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = personCrushService.getUsersIdByCrushId(id);
+        final Set<Long> crushesIdList = personCrushService.getUsersIdByCrushId(id)
+                .stream()
+                .map(personCrush -> personCrush.getUserId())
+                .collect(Collectors.toSet());
         final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }

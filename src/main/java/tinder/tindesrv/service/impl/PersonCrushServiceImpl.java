@@ -27,11 +27,10 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      */
     @Override
     public void create(PersonCrushDto personCrushDto) {
-        PersonCrush personCrush = new PersonCrush()
-                .builder()
+        PersonCrush personCrush = new PersonCrush().builder()
                 .id(personCrushDto.getId())
                 .crushId(personCrushDto.getCrushId())
-                .userId(personCrushDto.getCrushId())
+                .userId(personCrushDto.getUserId())
                 .build();
         personCrushRepository.save(personCrush);
     }
@@ -84,7 +83,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param id - id пользователя
      * @return - Set<Long> клиентов
      */
-    public Set<Long> getCrushesIdByUserId(Long id) {
+    public Set<PersonCrush> getCrushesIdByUserId(Long id) {
         return personCrushRepository.getCrushIdByUserId(id);
     }
 
@@ -95,7 +94,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param id - id пользователя
      * @return - Set<Long> клиентов
      */
-    public Set<Long> getUsersIdByCrushId(Long id) {
+    public Set<PersonCrush> getUsersIdByCrushId(Long id) {
         return personCrushRepository.getUserIdByCrushId(id);
     }
 
