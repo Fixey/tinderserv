@@ -10,7 +10,7 @@
             (
             id bigint primary key unique,
             full_name varchar(200) not null,
-            birthday date not null,
+            birthdate date not null,
             gender varchar(10),
             crush varchar(10),
             description varchar not null,

@@ -19,7 +19,7 @@ public class Person {
     @Id
     private Long id;
     private String fullName;
-    private LocalDate birthday;
+    private LocalDate birthdate;
     private String crush;
     private String gender;
     private String description;

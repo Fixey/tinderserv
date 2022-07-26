@@ -4,13 +4,18 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <changeSet author="mdunaev" id="5">
+    <changeSet author="mdunaev" id="4">
         <sql>
-            insert into persons values
+            INSERT INTO PERSONS(ID,FULL_NAME,BIRTHDATE,GENDER,CRUSH,DESCRIPTION) values
             (1, 'Vassily Petrov','22.12.1993', 'MEN', 'WOMEN','WTF wtf'),
             (2, 'Pjotr Vasechkin','21.12.1993', 'MEN', 'WOMEN','Lol lol'),
             (3, 'Kate dfg','20.12.1993', 'WOMEN', 'MEN','Lol lol'),
             (4, 'Ginger dfg ','25.12.1993', 'WOMEN', 'MEN','Lol lol');
+            INSERT INTO PERSONS_TO_PERSONS(ID,USER_ID,CRUSH_ID) values
+            (1,1,3),
+            (2,2,3),
+            (3,3,1),
+            (4,1,2);
         </sql>
     </changeSet>
 </databaseChangeLog>

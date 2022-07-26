@@ -40,7 +40,7 @@ public class PersonServiceImpl implements PersonService {
                 .fullName(personDto.getFullName())
                 .gender(personDto.getGender())
                 .crush(personDto.getCrush())
-                .birthday(personDto.getBirthday())
+                .birthdate(personDto.getBirthdate())
                 .description(personDto.getDescription())
                 .build();
         personRepository.save(person);
