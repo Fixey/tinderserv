@@ -28,7 +28,6 @@ public class PersonCrushServiceImpl implements PersonCrushService {
     @Override
     public void create(PersonCrushDto personCrushDto) {
         PersonCrush personCrush = new PersonCrush().builder()
-                .id(personCrushDto.getId())
                 .crushId(personCrushDto.getCrushId())
                 .userId(personCrushDto.getUserId())
                 .build();
@@ -111,20 +110,22 @@ public class PersonCrushServiceImpl implements PersonCrushService {
     /**
      * Существует уже лайк на клиенте?
      *
-     * @param personCrushDto - связь между клиентами
+     * @param userId  id пользователя
+     * @param crushId id любимца
      * @return - true если запись уже есть, иначе false
      */
-    public Boolean existLikeByCrush(PersonCrushDto personCrushDto) {
-        return personCrushRepository.existsByUserIdAndCrushId(personCrushDto.getUserId(), personCrushDto.getCrushId());
+    public Boolean existLikeByCrush(Long userId, Long crushId) {
+        return personCrushRepository.existsByUserIdAndCrushId(userId, crushId);
     }
 
     /**
      * Удалить связь клиента и пользователя
      *
-     * @param PersonCrush - сущность связи клиентов
+     * @param userId  id пользователя
+     * @param crushId id любимца
      */
-    public void deleteLike(PersonCrushDto PersonCrush) {
-        personCrushRepository.deleteByUserIdAndCrushId(PersonCrush.getUserId(), PersonCrush.getCrushId());
+    public void deleteLike(Long userId, Long crushId) {
+        personCrushRepository.deleteByUserIdAndCrushId(userId, crushId);
     }
 
     /**

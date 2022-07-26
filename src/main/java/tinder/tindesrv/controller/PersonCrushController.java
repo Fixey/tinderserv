@@ -25,7 +25,7 @@ public class PersonCrushController {
      */
     @PostMapping(value = "/crushes")
     public ResponseEntity<?> createCrush(@RequestBody PersonCrushDto personCrushDto) {
-        if (!personCrushService.existLikeByCrush(personCrushDto)) {
+        if (!personCrushService.existLikeByCrush(personCrushDto.getUserId(), personCrushDto.getCrushId())) {
             personCrushService.create(personCrushDto);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -52,7 +52,7 @@ public class PersonCrushController {
     @GetMapping(value = "/crushes/{userId}/{crushId}")
     public ResponseEntity<Boolean> existLikeByCrush(@PathVariable(name = "userId") Long userId,
                                                     @PathVariable(name = "crushId") Long crushId) {
-        return new ResponseEntity<>(personCrushService.existLikeByCrush(new PersonCrushDto(userId, crushId)), HttpStatus.OK);
+        return new ResponseEntity<>(personCrushService.existLikeByCrush(userId, crushId), HttpStatus.OK);
 
     }
 
@@ -79,7 +79,7 @@ public class PersonCrushController {
      */
     @GetMapping(value = "/lovers/{userId}/{crushId}")
     public ResponseEntity<List<PersonCrushDto>> getUserAndCrush(@PathVariable(name = "userId") Long userId,
-                                                          @PathVariable(name = "crushId") Long crushId) {
+                                                                @PathVariable(name = "crushId") Long crushId) {
         final List<PersonCrushDto> personCrushDtoList = personCrushService.getUserAndCrush(userId, crushId);
         return new ResponseEntity<>(personCrushDtoList, HttpStatus.OK);
     }
@@ -87,13 +87,15 @@ public class PersonCrushController {
     /**
      * Удаление связи в интресект таблице клиентов
      *
-     * @param personCrushDto сущность связей
+     * @param userId  id пользователя
+     * @param crushId id любимца
      * @return HttpStatus.OK - если все прошло без ошибок
      */
-    @DeleteMapping(value = "/crushes")
-    public ResponseEntity<?> deleteCrush(@RequestBody PersonCrushDto personCrushDto) {
-        if (personCrushService.existLikeByCrush(personCrushDto)) {
-            personCrushService.deleteLike(personCrushDto);
+    @DeleteMapping(value = "/crushes/{userId}/{crushId}")
+    public ResponseEntity<?> deleteCrush(@PathVariable(name = "userId") Long userId,
+                                         @PathVariable(name = "crushId") Long crushId) {
+        if (personCrushService.existLikeByCrush(userId, crushId)) {
+            personCrushService.deleteLike(userId, crushId);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
