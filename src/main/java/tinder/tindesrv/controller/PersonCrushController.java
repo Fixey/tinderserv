@@ -71,6 +71,20 @@ public class PersonCrushController {
     }
 
     /**
+     * Найти все связи между клиентом и любимцем
+     *
+     * @param userId  связи
+     * @param crushId связи
+     * @return personCrushDto связи. HttpStatus.NOT_FOUND - если свзяи нет.
+     */
+    @GetMapping(value = "/lovers/{userId}/{crushId}")
+    public ResponseEntity<List<PersonCrushDto>> getUserAndCrush(@PathVariable(name = "userId") Long userId,
+                                                          @PathVariable(name = "crushId") Long crushId) {
+        final List<PersonCrushDto> personCrushDtoList = personCrushService.getUserAndCrush(userId, crushId);
+        return new ResponseEntity<>(personCrushDtoList, HttpStatus.OK);
+    }
+
+    /**
      * Удаление связи в интресект таблице клиентов
      *
      * @param personCrushDto сущность связей

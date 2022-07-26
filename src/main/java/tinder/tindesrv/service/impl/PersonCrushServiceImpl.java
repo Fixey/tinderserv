@@ -121,9 +121,22 @@ public class PersonCrushServiceImpl implements PersonCrushService {
     /**
      * Удалить связь клиента и пользователя
      *
-     * @param persToPers - сущность связи клиентов
+     * @param PersonCrush - сущность связи клиентов
      */
-    public void deleteLike(PersonCrushDto persToPers) {
-        personCrushRepository.deleteByUserIdAndCrushId(persToPers.getUserId(), persToPers.getCrushId());
+    public void deleteLike(PersonCrushDto PersonCrush) {
+        personCrushRepository.deleteByUserIdAndCrushId(PersonCrush.getUserId(), PersonCrush.getCrushId());
+    }
+
+    /**
+     * Достать связи для клиента и любимца
+     *
+     * @param userId  - id клиента
+     * @param crushId - id любимца
+     */
+    public List<PersonCrushDto> getUserAndCrush(Long userId, Long crushId) {
+        return personCrushRepository.findByUserIdAndCrushIdOrUserIdAndCrushId(userId, crushId, crushId, userId)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 }
