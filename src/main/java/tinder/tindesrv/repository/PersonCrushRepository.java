@@ -52,7 +52,7 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param crushId id любимца
      * @return List<PersonCrush> лист связей
      */
-    List<PersonCrush> findByUserIdAndIdNotOrCrushId(Long userId, Long id, Long crushId);
+    List<PersonCrush> findByUserIdOrCrushId(Long userId, Long crushId);
 
     /**
      * Есть ли связь между клиентом и любимцем

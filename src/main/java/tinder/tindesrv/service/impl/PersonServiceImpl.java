@@ -131,10 +131,19 @@ public class PersonServiceImpl implements PersonService {
      * @return Список любимцев
      */
     public List<PersonDto> getPersonsForLovers(Long userId) {
-        Set<Long> usersSet = personCrushRepository.findByUserIdAndIdNotOrCrushId(userId, userId, userId)
-                .stream().map(PersonCrush::getId).collect(Collectors.toSet());
+        List<PersonCrush> personList = personCrushRepository.findByUserIdOrCrushId(userId, userId);
+        Set<Long> usersSet = personList
+                .stream()
+                .map(PersonCrush::getUserId)
+                .collect(Collectors.toSet());
+        Set<Long> crushesSet = personList
+                .stream()
+                .map(PersonCrush::getCrushId)
+                .collect(Collectors.toSet());
+        usersSet.addAll(crushesSet);
         return personRepository.findByIdIn(usersSet)
                 .stream()
+                .filter(person -> !person.getId().equals(userId))
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
     }
