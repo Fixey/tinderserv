@@ -1,6 +1,6 @@
 package tinder.tindesrv.service;
 
-import tinder.tindesrv.service.dto.PersonDto;
+import tinder.tindesrv.dto.PersonDto;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface PersonService {
      *
      * @param person - клиент для создания
      */
-    void create(PersonDto person);
+    PersonDto create(PersonDto person);
 
     /**
      * Возвращает список всех имеющихся клиентов

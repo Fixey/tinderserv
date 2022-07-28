@@ -35,7 +35,6 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
             "AND p2.userId=p1.crushId AND p1.userId=?1")
     Set<Long> getMatchesId(Long userId);
 
-
     /**
      * Найти все связи для контакта и любимца
      *
@@ -43,16 +42,7 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param crushId id любимца
      * @return List<PersonCrush> лист связей
      */
-    List<PersonCrush> findByUserIdAndCrushIdOrUserIdAndCrushId(Long userId, Long crushId, Long crushId1, Long userId1);
-
-    /**
-     * Найти всех контактов по user id или crush id
-     *
-     * @param userId  id клиента
-     * @param crushId id любимца
-     * @return List<PersonCrush> лист связей
-     */
-    List<PersonCrush> findByUserIdOrCrushId(Long userId, Long crushId);
+    List<PersonCrush> findByUserIdAndCrushId(Long userId, Long crushId);
 
     /**
      * Есть ли связь между клиентом и любимцем

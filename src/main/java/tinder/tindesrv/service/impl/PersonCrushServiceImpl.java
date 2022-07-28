@@ -1,14 +1,15 @@
 package tinder.tindesrv.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tinder.tindesrv.dto.PersonCrushDto;
 import tinder.tindesrv.entity.PersonCrush;
+import tinder.tindesrv.exceptions.NotFountException;
+import tinder.tindesrv.mapping.PersonCrushMapper;
 import tinder.tindesrv.repository.PersonCrushRepository;
 import tinder.tindesrv.service.PersonCrushService;
-import tinder.tindesrv.service.dto.PersonCrushDto;
-import tinder.tindesrv.service.mapping.PersonCrushMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +17,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PersonCrushServiceImpl implements PersonCrushService {
-    @Autowired
     private final PersonCrushRepository personCrushRepository;
     private final PersonCrushMapper mapper;
 
@@ -26,12 +26,10 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param personCrushDto - клиент для создания
      */
     @Override
-    public void create(PersonCrushDto personCrushDto) {
-        PersonCrush personCrush = new PersonCrush().builder()
-                .crushId(personCrushDto.getCrushId())
-                .userId(personCrushDto.getUserId())
-                .build();
-        personCrushRepository.save(personCrush);
+    public PersonCrushDto create(PersonCrushDto personCrushDto) {
+        PersonCrush personCrush = mapper.fromDto(personCrushDto);
+        PersonCrush savingPersonCrush = personCrushRepository.save(personCrush);
+        return mapper.toDto(savingPersonCrush);
     }
 
     /**
@@ -58,7 +56,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
         return personCrushRepository
                 .findById(id)
                 .map(mapper::toDto)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NotFountException::new);
     }
 
     /**
@@ -135,9 +133,14 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param crushId - id любимца
      */
     public List<PersonCrushDto> getUserAndCrush(Long userId, Long crushId) {
-        return personCrushRepository.findByUserIdAndCrushIdOrUserIdAndCrushId(userId, crushId, crushId, userId)
+        List<PersonCrushDto> personCrushDtoList = new ArrayList<>();
+        personCrushDtoList.addAll(personCrushRepository.findByUserIdAndCrushId(userId, crushId)
                 .stream()
                 .map(mapper::toDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        personCrushDtoList.addAll(personCrushRepository.findByUserIdAndCrushId(crushId, userId).stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList()));
+        return personCrushDtoList;
     }
 }

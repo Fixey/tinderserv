@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tinder.tindesrv.service.dto.PersonDto;
+import tinder.tindesrv.dto.PersonDto;
 import tinder.tindesrv.service.impl.PersonCrushServiceImpl;
 import tinder.tindesrv.service.impl.PersonServiceImpl;
 
@@ -23,25 +23,27 @@ public class PersonController {
 
 
     /**
-     * Добаваляет клинета
+     * Добавляет клиента в базу
      *
      * @param person клиент
-     * @return HttpStatus.CREATED если сохранился
+     * @return PersonDto клиент, которого добавили
      */
     @PostMapping(value = "/persons")
-    public ResponseEntity<?> createPerson(@RequestBody PersonDto person) {
-        personService.create(person);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto person) {
+        PersonDto savingPersonDto = personService.create(person);
+        return savingPersonDto != null
+                ? new ResponseEntity<>(savingPersonDto, HttpStatus.CREATED)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
     /**
      * Возвращает всех клиентов
      *
-     * @return List<Person> и HttpStatus.OK если все Ок, иначе NOT_FOUND
+     * @return List<Person> список клиентов
      */
     @GetMapping(value = "/persons")
     public ResponseEntity<List<PersonDto>> read() {
-        final List<PersonDto> persons = personService.readAll();
+        List<PersonDto> persons = personService.readAll();
         return persons != null && !persons.isEmpty()
                 ? new ResponseEntity<>(persons, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -54,8 +56,8 @@ public class PersonController {
      * @return Person сущность клиента
      */
     @GetMapping(value = "/persons/{id}")
-    public ResponseEntity<PersonDto> read(@PathVariable(name = "id") Long id) {
-        final PersonDto person = personService.read(id);
+    public ResponseEntity<PersonDto> read(@PathVariable Long id) {
+        PersonDto person = personService.read(id);
         return person != null
                 ? new ResponseEntity<>(person, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -67,53 +69,57 @@ public class PersonController {
      * @param id клиента
      * @return List<Person> список клиентов
      */
-    @GetMapping(value = "/persons_crush/{id}")
-    public ResponseEntity<List<PersonDto>> searchPersonsByGender(@PathVariable(name = "id") Long id) {
+    @GetMapping(value = "/person/search/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonDto> searchCrush(@PathVariable Long id) {
         PersonDto person = personService.read(id);
-        final List<PersonDto> personList = personService.getPersonsByGender(person);
-        return new ResponseEntity<>(personList, HttpStatus.OK);
+        List<PersonDto> personList = personService.getPersonsByGender(person);
+        return personList;
     }
 
     /**
      * Удаление клиента
      *
      * @param id клиента
-     * @return HttpStatus.OK - если удалился, иначе HttpStatus.NOT_MODIFIED
+     * @return id клиента которого удалили
      */
     @DeleteMapping(value = "/persons/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Long delete(@PathVariable Long id) {
         personService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return id;
     }
 
     /**
      * Любимцы. Список клиентов, кого ищет пользователь
      *
-     * @return ResponseEntity<List < Person>> список людей кого любит пользователь
+     * @return List < Person> список людей, кого любит пользователь
      */
     @GetMapping(value = "/personlove/{id}")
-    public ResponseEntity<List<PersonDto>> getPersonsFalling(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = personCrushService.getCrushesIdByUserId(id)
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonDto> getPersonsFalling(@PathVariable Long id) {
+        Set<Long> crushesIdList = personCrushService.getCrushesIdByUserId(id)
                 .stream()
                 .map(personCrush -> personCrush.getCrushId())
                 .collect(Collectors.toSet());
-        final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
-        return new ResponseEntity<>(personList, HttpStatus.OK);
+        List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
+        return personList;
     }
 
     /**
      * Кому нравится пользователь
      *
-     * @return ResponseEntity<List < Person>> список людей кому нравится пользователь
+     * @return List < Person> список людей кому нравится пользователь
      */
     @GetMapping(value = "/loveperson/{id}")
-    public ResponseEntity<List<PersonDto>> getWhoLikePerson(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = personCrushService.getUsersIdByCrushId(id)
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonDto> getWhoLikePerson(@PathVariable Long id) {
+        Set<Long> crushesIdList = personCrushService.getUsersIdByCrushId(id)
                 .stream()
                 .map(personCrush -> personCrush.getUserId())
                 .collect(Collectors.toSet());
-        final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
-        return new ResponseEntity<>(personList, HttpStatus.OK);
+        List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
+        return personList;
     }
 
     /**
@@ -123,21 +129,21 @@ public class PersonController {
      * @return Список людей с которым произошел мэтч
      */
     @GetMapping(value = "/matches/{id}")
-    public ResponseEntity<List<PersonDto>> getMatches(@PathVariable(name = "id") Long id) {
-        final Set<Long> crushesIdList = personCrushService.getMatchesByUserId(id);
-        final List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
+    public ResponseEntity<List<PersonDto>> getMatches(@PathVariable Long id) {
+        Set<Long> crushesIdList = personCrushService.getMatchesByUserId(id);
+        List<PersonDto> personList = personService.getPersonsByListId(crushesIdList);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 
     /**
      * Любимцы. Список любимцев, которые нравились клиенту, выбрали клиента или был взаимный выбор.
      *
-     * @param userId клиента
+     * @param id клиента
      * @return Список любимцев
      */
     @GetMapping(value = "/lovers/{id}")
-    public ResponseEntity<List<PersonDto>> getPersonsForLovers(@PathVariable(name = "id") Long userId) {
-        final List<PersonDto> personList = personService.getPersonsForLovers(userId);
+    public ResponseEntity<List<PersonDto>> getPersonsForLovers(@PathVariable Long id) {
+        List<PersonDto> personList = personService.getPersonsForLovers(id);
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
 }

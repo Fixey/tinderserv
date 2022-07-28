@@ -1,4 +1,4 @@
-package tinder.tindesrv.service.dto;
+package tinder.tindesrv.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,10 +1,12 @@
-package tinder.tindesrv.service.mapping;
+package tinder.tindesrv.mapping;
 
 import org.mapstruct.Mapper;
+import tinder.tindesrv.dto.PersonDto;
 import tinder.tindesrv.entity.Person;
-import tinder.tindesrv.service.dto.PersonDto;
 
 @Mapper(componentModel = "spring")
 public interface PersonMapper {
     PersonDto toDto(Person model);
+
+    Person fromDto(PersonDto model);
 }

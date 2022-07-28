@@ -1,16 +1,17 @@
 package tinder.tindesrv.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @Entity
-@ToString
 @Table(name = "persons_to_persons")
 public class PersonCrush {
     @Id

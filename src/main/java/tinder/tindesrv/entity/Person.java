@@ -1,6 +1,9 @@
 package tinder.tindesrv.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,9 +11,7 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

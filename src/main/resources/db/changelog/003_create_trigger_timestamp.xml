@@ -6,10 +6,9 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
     <changeSet author="mdunaev" id="3">
         <sql>
-            create TRIGGER set_timestamp
-            BEFORE update ON persons
-            FOR EACH ROW
-            EXECUTE PROCEDURE trigger_set_timestamp();
+            CREATE TRIGGER set_timestamp
+            BEFORE UPDATE
+            ON persons FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
         </sql>
     </changeSet>
 </databaseChangeLog>

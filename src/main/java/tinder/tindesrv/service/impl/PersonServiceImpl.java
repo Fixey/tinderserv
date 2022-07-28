@@ -1,16 +1,15 @@
 package tinder.tindesrv.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tinder.tindesrv.dto.PersonDto;
 import tinder.tindesrv.entity.Person;
-import tinder.tindesrv.entity.PersonCrush;
 import tinder.tindesrv.enums.CrushTypeEnum;
+import tinder.tindesrv.exceptions.NotFountException;
+import tinder.tindesrv.mapping.PersonMapper;
 import tinder.tindesrv.repository.PersonCrushRepository;
 import tinder.tindesrv.repository.PersonRepository;
 import tinder.tindesrv.service.PersonService;
-import tinder.tindesrv.service.dto.PersonDto;
-import tinder.tindesrv.service.mapping.PersonMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
-    @Autowired
     private final PersonRepository personRepository;
-    @Autowired
     private final PersonCrushRepository personCrushRepository;
     private final PersonMapper personMapper;
 
@@ -33,17 +30,11 @@ public class PersonServiceImpl implements PersonService {
      * @param personDto - клиент для создания
      */
     @Override
-    public void create(PersonDto personDto) {
-        Person person = new Person()
-                .builder()
-                .id(personDto.getId())
-                .fullName(personDto.getFullName())
-                .gender(personDto.getGender())
-                .crush(personDto.getCrush())
-                .birthdate(personDto.getBirthdate())
-                .description(personDto.getDescription())
-                .build();
-        personRepository.save(person);
+    public PersonDto create(PersonDto personDto) {
+        Person person = personMapper.fromDto(personDto);
+        Person savingPerson = personRepository.save(person);
+        personMapper.toDto(savingPerson);
+        return personMapper.toDto(savingPerson);
     }
 
     /**
@@ -70,7 +61,7 @@ public class PersonServiceImpl implements PersonService {
         return personRepository
                 .findById(id)
                 .map(personMapper::toDto)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NotFountException::new);
     }
 
     /**
@@ -131,17 +122,7 @@ public class PersonServiceImpl implements PersonService {
      * @return Список любимцев
      */
     public List<PersonDto> getPersonsForLovers(Long userId) {
-        List<PersonCrush> personList = personCrushRepository.findByUserIdOrCrushId(userId, userId);
-        Set<Long> usersSet = personList
-                .stream()
-                .map(PersonCrush::getUserId)
-                .collect(Collectors.toSet());
-        Set<Long> crushesSet = personList
-                .stream()
-                .map(PersonCrush::getCrushId)
-                .collect(Collectors.toSet());
-        usersSet.addAll(crushesSet);
-        return personRepository.findByIdIn(usersSet)
+        return personRepository.getLovers(userId)
                 .stream()
                 .filter(person -> !person.getId().equals(userId))
                 .map(personMapper::toDto)

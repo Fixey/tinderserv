@@ -1,4 +1,4 @@
-package tinder.tindesrv.controller.utills;
+package tinder.tindesrv.exceptions;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +19,6 @@ public class ApiError {
     private List<String> stackTrace;
 
     public ApiError(HttpStatus status, String message, List<String> stackTrace) {
-        super();
         this.status = status;
         this.message = message;
         this.stackTrace = stackTrace;

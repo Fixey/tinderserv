@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tinder.tindesrv.service.dto.PersonCrushDto;
+import tinder.tindesrv.dto.PersonCrushDto;
 import tinder.tindesrv.service.impl.PersonCrushServiceImpl;
 import tinder.tindesrv.service.impl.PersonServiceImpl;
 
@@ -18,17 +18,20 @@ public class PersonCrushController {
     private final PersonCrushServiceImpl personCrushService;
 
     /**
-     * Добавляет связь межеду клиентами
+     * Добавляет связь между клиентами
      *
      * @param personCrushDto сущность интерсект таблицы
-     * @return HttpStatus.CREATED - если все создалось без ошибок
+     * @return personCrushDto связь, которую создали
      */
     @PostMapping(value = "/crushes")
-    public ResponseEntity<?> createCrush(@RequestBody PersonCrushDto personCrushDto) {
+    public ResponseEntity<PersonCrushDto> createCrush(@RequestBody PersonCrushDto personCrushDto) {
+        PersonCrushDto savingPersonCrushDto = null;
         if (!personCrushService.existLikeByCrush(personCrushDto.getUserId(), personCrushDto.getCrushId())) {
-            personCrushService.create(personCrushDto);
+            savingPersonCrushDto = personCrushService.create(personCrushDto);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return savingPersonCrushDto != null
+                ? new ResponseEntity<>(personCrushDto, HttpStatus.CREATED)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
     /**
@@ -38,7 +41,7 @@ public class PersonCrushController {
      */
     @GetMapping(value = "/crushes")
     public ResponseEntity<?> getCrushes() {
-        final List<PersonCrushDto> personCrushDtos = personCrushService.readAll();
+        List<PersonCrushDto> personCrushDtos = personCrushService.readAll();
         return personCrushDtos != null && !personCrushDtos.isEmpty()
                 ? new ResponseEntity<>(personCrushDtos, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -47,13 +50,13 @@ public class PersonCrushController {
     /**
      * Любимцы. Если ли у человека лайк
      *
-     * @return ResponseEntity<List < Person>> список людей кого любит пользователь
+     * @return true - если лайк есть, false - если нет лайка
      */
     @GetMapping(value = "/crushes/{userId}/{crushId}")
-    public ResponseEntity<Boolean> existLikeByCrush(@PathVariable(name = "userId") Long userId,
-                                                    @PathVariable(name = "crushId") Long crushId) {
-        return new ResponseEntity<>(personCrushService.existLikeByCrush(userId, crushId), HttpStatus.OK);
-
+    @ResponseStatus(HttpStatus.OK)
+    public Boolean existLikeByCrush(@PathVariable Long userId,
+                                    @PathVariable Long crushId) {
+        return personCrushService.existLikeByCrush(userId, crushId);
     }
 
     /**
@@ -63,8 +66,8 @@ public class PersonCrushController {
      * @return personCrushDto связи. HttpStatus.NOT_FOUND - если свзяи нет.
      */
     @GetMapping(value = "/crushes/{id}")
-    public ResponseEntity<PersonCrushDto> readCrush(@PathVariable(name = "id") Long id) {
-        final PersonCrushDto personCrushDto = personCrushService.read(id);
+    public ResponseEntity<PersonCrushDto> readCrush(@PathVariable Long id) {
+        PersonCrushDto personCrushDto = personCrushService.read(id);
         return personCrushDto != null
                 ? new ResponseEntity<>(personCrushDto, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -75,13 +78,14 @@ public class PersonCrushController {
      *
      * @param userId  связи
      * @param crushId связи
-     * @return personCrushDto связи. HttpStatus.NOT_FOUND - если свзяи нет.
+     * @return List<PersonCrushDto> лист связей между клиентами
      */
     @GetMapping(value = "/lovers/{userId}/{crushId}")
-    public ResponseEntity<List<PersonCrushDto>> getUserAndCrush(@PathVariable(name = "userId") Long userId,
-                                                                @PathVariable(name = "crushId") Long crushId) {
-        final List<PersonCrushDto> personCrushDtoList = personCrushService.getUserAndCrush(userId, crushId);
-        return new ResponseEntity<>(personCrushDtoList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonCrushDto> getUserAndCrush(@PathVariable Long userId,
+                                                @PathVariable Long crushId) {
+        List<PersonCrushDto> personCrushDtoList = personCrushService.getUserAndCrush(userId, crushId);
+        return personCrushDtoList;
     }
 
     /**
@@ -89,14 +93,13 @@ public class PersonCrushController {
      *
      * @param userId  id пользователя
      * @param crushId id любимца
-     * @return HttpStatus.OK - если все прошло без ошибок
      */
     @DeleteMapping(value = "/crushes/{userId}/{crushId}")
-    public ResponseEntity<?> deleteCrush(@PathVariable(name = "userId") Long userId,
-                                         @PathVariable(name = "crushId") Long crushId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCrush(@PathVariable Long userId,
+                            @PathVariable Long crushId) {
         if (personCrushService.existLikeByCrush(userId, crushId)) {
             personCrushService.deleteLike(userId, crushId);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
