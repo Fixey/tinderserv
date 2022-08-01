@@ -7,48 +7,18 @@ import tinder.tindesrv.entity.Person;
 import tinder.tindesrv.enums.CrushTypeEnum;
 import tinder.tindesrv.exceptions.NotFountException;
 import tinder.tindesrv.mapping.PersonMapper;
-import tinder.tindesrv.repository.PersonCrushRepository;
 import tinder.tindesrv.repository.PersonRepository;
 import tinder.tindesrv.service.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
-    private final PersonCrushRepository personCrushRepository;
     private final PersonMapper personMapper;
-
-
-    /**
-     * Создает нового клиента
-     *
-     * @param personDto - клиент для создания
-     */
-    @Override
-    public PersonDto create(PersonDto personDto) {
-        Person person = personMapper.fromDto(personDto);
-        Person savingPerson = personRepository.save(person);
-        personMapper.toDto(savingPerson);
-        return personMapper.toDto(savingPerson);
-    }
-
-    /**
-     * Возвращает список всех имеющихся клиентов
-     *
-     * @return список клиентов
-     */
-    @Override
-    public List<PersonDto> readAll() {
-        return personRepository.findAll()
-                .stream()
-                .map(personMapper::toDto)
-                .collect(Collectors.toList());
-    }
 
     /**
      * Возвращает клиента по его ID
@@ -65,51 +35,35 @@ public class PersonServiceImpl implements PersonService {
     }
 
     /**
-     * Удаляет клиента с заданным ID
+     * Возвращает список всех имеющихся клиентов
      *
-     * @param id - id клиента, которого нужно удалить
-     * @return - true если клиент был удален, иначе false
+     * @return список клиентов
      */
     @Override
-    public boolean delete(Long id) {
-        if (personRepository.existsById(id)) {
-            personRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Возвращает список клиентов по списку id
-     *
-     * @param idList список id клиентов
-     * @return List<Person> список клиентов по списку
-     */
-    public List<PersonDto> getPersonsByListId(Set<Long> idList) {
-        return personRepository
-                .findByIdIn(idList)
+    public List<PersonDto> readAll() {
+        return personRepository.findAll()
                 .stream()
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Возвращает список клиентов которые ищут пару по гендеру
+     * Возвращает список клиентов, которые ищут пару по гендеру
      *
-     * @param person пол по которому осуществляется поиск
+     * @param id клиента
      * @return List<Person> список клиентов по списку
      */
-    public List<PersonDto> getPersonsByGender(PersonDto person) {
+    public List<PersonDto> getPersonsByGender(Long id) {
+        PersonDto person = read(id);
         List<String> crushTypeList = new ArrayList<>();
-        CrushTypeEnum personCrush = CrushTypeEnum.valueOf(person.getCrush());
-        if (personCrush.equals(CrushTypeEnum.ALL)) {
+        if (person.getCrush().equals(CrushTypeEnum.ALL)) {
             crushTypeList.add(CrushTypeEnum.MEN.name());
             crushTypeList.add(CrushTypeEnum.WOMEN.name());
         } else {
-            crushTypeList.add(person.getCrush());
+            crushTypeList.add(person.getCrush().name());
         }
         return personRepository
-                .findByGender(crushTypeList, person.getGender())
+                .findByGender(crushTypeList, person.getGender().name())
                 .stream()
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
@@ -122,10 +76,33 @@ public class PersonServiceImpl implements PersonService {
      * @return Список любимцев
      */
     public List<PersonDto> getPersonsForLovers(Long userId) {
-        return personRepository.getLovers(userId)
+        return personRepository.getLovers(userId, userId)
                 .stream()
-                .filter(person -> !person.getId().equals(userId))
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Создает нового клиента
+     *
+     * @param personDto - клиент для создания
+     */
+    @Override
+    public PersonDto create(PersonDto personDto) {
+        Person person = personMapper.toEntity(personDto);
+        Person savingPerson = personRepository.save(person);
+        return personMapper.toDto(savingPerson);
+    }
+
+    /**
+     * Удаляет клиента с заданным ID
+     *
+     * @param id - id клиента, которого нужно удалить
+     */
+    @Override
+    public void delete(Long id) {
+        if (personRepository.existsById(id)) {
+            personRepository.deleteById(id);
+        }
     }
 }

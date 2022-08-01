@@ -10,6 +10,9 @@ import tinder.tindesrv.service.impl.PersonServiceImpl;
 
 import java.util.List;
 
+/**
+ * Persons_to_persons контроллер
+ */
 @RestController
 @RequiredArgsConstructor
 public class PersonCrushController {
@@ -18,33 +21,13 @@ public class PersonCrushController {
     private final PersonCrushServiceImpl personCrushService;
 
     /**
-     * Добавляет связь между клиентами
-     *
-     * @param personCrushDto сущность интерсект таблицы
-     * @return personCrushDto связь, которую создали
-     */
-    @PostMapping(value = "/crushes")
-    public ResponseEntity<PersonCrushDto> createCrush(@RequestBody PersonCrushDto personCrushDto) {
-        PersonCrushDto savingPersonCrushDto = null;
-        if (!personCrushService.existLikeByCrush(personCrushDto.getUserId(), personCrushDto.getCrushId())) {
-            savingPersonCrushDto = personCrushService.create(personCrushDto);
-        }
-        return savingPersonCrushDto != null
-                ? new ResponseEntity<>(personCrushDto, HttpStatus.CREATED)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
-    /**
      * Вернуть все связи интерсект таблицы клиентов
      *
      * @return List<personCrushDtos> сущности клинетов
      */
     @GetMapping(value = "/crushes")
-    public ResponseEntity<?> getCrushes() {
-        List<PersonCrushDto> personCrushDtos = personCrushService.readAll();
-        return personCrushDtos != null && !personCrushDtos.isEmpty()
-                ? new ResponseEntity<>(personCrushDtos, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public List<PersonCrushDto> getCrushes() {
+        return personCrushService.readAll();
     }
 
     /**
@@ -53,7 +36,6 @@ public class PersonCrushController {
      * @return true - если лайк есть, false - если нет лайка
      */
     @GetMapping(value = "/crushes/{userId}/{crushId}")
-    @ResponseStatus(HttpStatus.OK)
     public Boolean existLikeByCrush(@PathVariable Long userId,
                                     @PathVariable Long crushId) {
         return personCrushService.existLikeByCrush(userId, crushId);
@@ -81,11 +63,21 @@ public class PersonCrushController {
      * @return List<PersonCrushDto> лист связей между клиентами
      */
     @GetMapping(value = "/lovers/{userId}/{crushId}")
-    @ResponseStatus(HttpStatus.OK)
     public List<PersonCrushDto> getUserAndCrush(@PathVariable Long userId,
                                                 @PathVariable Long crushId) {
-        List<PersonCrushDto> personCrushDtoList = personCrushService.getUserAndCrush(userId, crushId);
-        return personCrushDtoList;
+        return personCrushService.getUserAndCrush(userId, crushId);
+    }
+
+    /**
+     * Добавляет связь между клиентами
+     *
+     * @param personCrushDto сущность интерсект таблицы
+     * @return personCrushDto связь, которую создали
+     */
+    @PostMapping(value = "/crushes")
+    public ResponseEntity<PersonCrushDto> createCrush(@RequestBody PersonCrushDto personCrushDto) {
+        PersonCrushDto savingPersonCrushDto = personCrushService.create(personCrushDto);
+        return new ResponseEntity<>(savingPersonCrushDto, HttpStatus.CREATED);
     }
 
     /**
@@ -98,8 +90,6 @@ public class PersonCrushController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCrush(@PathVariable Long userId,
                             @PathVariable Long crushId) {
-        if (personCrushService.existLikeByCrush(userId, crushId)) {
-            personCrushService.deleteLike(userId, crushId);
-        }
+        personCrushService.deleteLike(userId, crushId);
     }
 }

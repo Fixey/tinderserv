@@ -8,5 +8,5 @@ import tinder.tindesrv.entity.Person;
 public interface PersonMapper {
     PersonDto toDto(Person model);
 
-    Person fromDto(PersonDto model);
+    Person toEntity(PersonDto model);
 }

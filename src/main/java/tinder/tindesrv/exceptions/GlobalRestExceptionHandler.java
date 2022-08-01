@@ -17,7 +17,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
         ApiError apiError = ApiError.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.NOT_FOUND)
                 .message(ex.getLocalizedMessage())
                 .stackTrace(Arrays.stream(ex.getStackTrace())
                         .map(StackTraceElement::toString)

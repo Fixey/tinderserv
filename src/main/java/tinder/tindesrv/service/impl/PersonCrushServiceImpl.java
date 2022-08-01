@@ -11,7 +11,6 @@ import tinder.tindesrv.service.PersonCrushService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,15 +20,17 @@ public class PersonCrushServiceImpl implements PersonCrushService {
     private final PersonCrushMapper mapper;
 
     /**
-     * Создает нового клиента
+     * Возвращает клиента по его ID
      *
-     * @param personCrushDto - клиент для создания
+     * @param id - ID клиента
+     * @return - объект клиента с заданным ID
      */
     @Override
-    public PersonCrushDto create(PersonCrushDto personCrushDto) {
-        PersonCrush personCrush = mapper.fromDto(personCrushDto);
-        PersonCrush savingPersonCrush = personCrushRepository.save(personCrush);
-        return mapper.toDto(savingPersonCrush);
+    public PersonCrushDto read(Long id) {
+        return personCrushRepository
+                .findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(NotFountException::new);
     }
 
     /**
@@ -46,17 +47,43 @@ public class PersonCrushServiceImpl implements PersonCrushService {
     }
 
     /**
-     * Возвращает клиента по его ID
+     * Достать связи для клиента и любимца
      *
-     * @param id - ID клиента
-     * @return - объект клиента с заданным ID
+     * @param userId  - id клиента
+     * @param crushId - id любимца
+     */
+    public List<PersonCrushDto> getUserAndCrush(Long userId, Long crushId) {
+        return personCrushRepository.findByUserIdInAndCrushIdIn(List.of(userId,crushId),List.of(crushId,userId))
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Существует уже лайк на клиенте?
+     *
+     * @param userId  id пользователя
+     * @param crushId id любимца
+     * @return - true если запись уже есть, иначе false
+     */
+    public Boolean existLikeByCrush(Long userId, Long crushId) {
+        return personCrushRepository.existsByUserIdAndCrushId(userId, crushId);
+    }
+
+    /**
+     * Создает нового клиента
+     *
+     * @param personCrushDto - клиент для создания
      */
     @Override
-    public PersonCrushDto read(Long id) {
-        return personCrushRepository
-                .findById(id)
-                .map(mapper::toDto)
-                .orElseThrow(NotFountException::new);
+    public PersonCrushDto create(PersonCrushDto personCrushDto) {
+        PersonCrushDto savingPersonCrushDto = null;
+        if (!existLikeByCrush(personCrushDto.getUserId(), personCrushDto.getCrushId())) {
+            PersonCrush personCrush = mapper.toEntity(personCrushDto);
+            PersonCrush savingPersonCrush = personCrushRepository.save(personCrush);
+            savingPersonCrushDto = mapper.toDto(savingPersonCrush);
+        }
+        return savingPersonCrushDto;
     }
 
     /**
@@ -75,72 +102,14 @@ public class PersonCrushServiceImpl implements PersonCrushService {
     }
 
     /**
-     * Возвращает id клиентов которые нравятся пользователю
-     *
-     * @param id - id пользователя
-     * @return - Set<Long> клиентов
-     */
-    public Set<PersonCrush> getCrushesIdByUserId(Long id) {
-        return personCrushRepository.getCrushIdByUserId(id);
-    }
-
-
-    /**
-     * Возвращает id клиентов, которым понравился пользователь
-     *
-     * @param id - id пользователя
-     * @return - Set<Long> клиентов
-     */
-    public Set<PersonCrush> getUsersIdByCrushId(Long id) {
-        return personCrushRepository.getUserIdByCrushId(id);
-    }
-
-    /**
-     * Возвращает id клиентов, которым понравился пользователь и пользователю понравился клиент.
-     *
-     * @param id - id пользователя
-     * @return - Set<Long> клиентов
-     */
-    public Set<Long> getMatchesByUserId(Long id) {
-        return personCrushRepository.getMatchesId(id);
-    }
-
-    /**
-     * Существует уже лайк на клиенте?
-     *
-     * @param userId  id пользователя
-     * @param crushId id любимца
-     * @return - true если запись уже есть, иначе false
-     */
-    public Boolean existLikeByCrush(Long userId, Long crushId) {
-        return personCrushRepository.existsByUserIdAndCrushId(userId, crushId);
-    }
-
-    /**
      * Удалить связь клиента и пользователя
      *
      * @param userId  id пользователя
      * @param crushId id любимца
      */
     public void deleteLike(Long userId, Long crushId) {
-        personCrushRepository.deleteByUserIdAndCrushId(userId, crushId);
-    }
-
-    /**
-     * Достать связи для клиента и любимца
-     *
-     * @param userId  - id клиента
-     * @param crushId - id любимца
-     */
-    public List<PersonCrushDto> getUserAndCrush(Long userId, Long crushId) {
-        List<PersonCrushDto> personCrushDtoList = new ArrayList<>();
-        personCrushDtoList.addAll(personCrushRepository.findByUserIdAndCrushId(userId, crushId)
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList()));
-        personCrushDtoList.addAll(personCrushRepository.findByUserIdAndCrushId(crushId, userId).stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList()));
-        return personCrushDtoList;
+        if (existLikeByCrush(userId, crushId)) {
+            deleteLike(userId, crushId);
+        }
     }
 }

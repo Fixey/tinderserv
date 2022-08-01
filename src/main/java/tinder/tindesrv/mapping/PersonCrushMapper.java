@@ -9,6 +9,6 @@ import tinder.tindesrv.entity.PersonCrush;
 public interface PersonCrushMapper {
     PersonCrushDto toDto(PersonCrush model);
 
-    PersonCrush fromDto(PersonCrushDto model);
+    PersonCrush toEntity(PersonCrushDto model);
 }
 

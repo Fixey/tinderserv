@@ -6,11 +6,12 @@ import java.util.List;
 
 public interface PersonCrushService {
     /**
-     * Создает нового клиента
+     * Возвращает клиента по его ID
      *
-     * @param personCrushDto - клиент для создания
+     * @param id - ID клиента
+     * @return - объект клиента с заданным ID
      */
-    PersonCrushDto create(PersonCrushDto personCrushDto);
+    PersonCrushDto read(Long id);
 
     /**
      * Возвращает список всех имеющихся клиентов
@@ -20,12 +21,11 @@ public interface PersonCrushService {
     List<PersonCrushDto> readAll();
 
     /**
-     * Возвращает клиента по его ID
+     * Создает нового клиента
      *
-     * @param id - ID клиента
-     * @return - объект клиента с заданным ID
+     * @param personCrushDto - клиент для создания
      */
-    PersonCrushDto read(Long id);
+    PersonCrushDto create(PersonCrushDto personCrushDto);
 
     /**
      * Удаляет клиента с заданным ID

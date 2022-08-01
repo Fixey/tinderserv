@@ -38,11 +38,11 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
     /**
      * Найти все связи для контакта и любимца
      *
-     * @param userId  id клиента
-     * @param crushId id любимца
+     * @param userId  id клиентов
+     * @param crushId id любимцев
      * @return List<PersonCrush> лист связей
      */
-    List<PersonCrush> findByUserIdAndCrushId(Long userId, Long crushId);
+    List<PersonCrush> findByUserIdInAndCrushIdIn(List<Long> userId, List<Long> crushId);
 
     /**
      * Есть ли связь между клиентом и любимцем

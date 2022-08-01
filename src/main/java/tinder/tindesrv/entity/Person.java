@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tinder.tindesrv.enums.CrushTypeEnum;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -21,7 +20,9 @@ public class Person {
     private Long id;
     private String fullName;
     private LocalDate birthdate;
-    private String crush;
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private CrushTypeEnum crush;
+    @Enumerated(EnumType.STRING)
+    private CrushTypeEnum gender;
     private String description;
 }
