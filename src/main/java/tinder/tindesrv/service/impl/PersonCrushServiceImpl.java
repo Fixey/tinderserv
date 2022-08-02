@@ -9,7 +9,6 @@ import tinder.tindesrv.mapping.PersonCrushMapper;
 import tinder.tindesrv.repository.PersonCrushRepository;
 import tinder.tindesrv.service.PersonCrushService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +52,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param crushId - id любимца
      */
     public List<PersonCrushDto> getUserAndCrush(Long userId, Long crushId) {
-        return personCrushRepository.findByUserIdInAndCrushIdIn(List.of(userId,crushId),List.of(crushId,userId))
+        return personCrushRepository.findByUserIdInAndCrushIdIn(List.of(userId, crushId), List.of(crushId, userId))
                 .stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
@@ -109,7 +108,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      */
     public void deleteLike(Long userId, Long crushId) {
         if (existLikeByCrush(userId, crushId)) {
-            deleteLike(userId, crushId);
+            personCrushRepository.deleteByUserIdAndCrushId(userId, crushId);
         }
     }
 }
