@@ -35,8 +35,7 @@ public class PersonController {
      */
     @GetMapping(value = "/persons")
     public List<PersonDto> read() {
-        List<PersonDto> persons = personService.readAll();
-        return persons;
+        return personService.readAll();
     }
 
     /**
@@ -45,7 +44,7 @@ public class PersonController {
      * @param id клиента
      * @return Person сущность клиента
      */
-    @GetMapping(value = "/persons/{id}")
+    @GetMapping(value = "/person/{id}")
     public ResponseEntity<PersonDto> read(@PathVariable Long id) {
         PersonDto person = personService.read(id);
         return person != null
@@ -72,9 +71,9 @@ public class PersonController {
      * @return PersonDto клиент, которого добавили
      */
     @PostMapping(value = "/person")
-    public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto person) {
-        PersonDto savingPersonDto = personService.create(person);
-        return new ResponseEntity<>(savingPersonDto, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public PersonDto upsertPerson(@RequestBody PersonDto person) {
+        return personService.upsert(person);
     }
 
     /**
@@ -82,7 +81,7 @@ public class PersonController {
      *
      * @param id клиента
      */
-    @DeleteMapping(value = "/persons/{id}")
+    @DeleteMapping(value = "/person/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         personService.delete(id);

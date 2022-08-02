@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import tinder.tindesrv.dto.PersonDto;
 import tinder.tindesrv.entity.Person;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface PersonMapper {
     PersonDto toDto(Person model);
 

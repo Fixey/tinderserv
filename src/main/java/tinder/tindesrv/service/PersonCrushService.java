@@ -25,13 +25,12 @@ public interface PersonCrushService {
      *
      * @param personCrushDto - клиент для создания
      */
-    PersonCrushDto create(PersonCrushDto personCrushDto);
+    PersonCrushDto upsert(PersonCrushDto personCrushDto);
 
     /**
      * Удаляет клиента с заданным ID
      *
      * @param id - id клиента, которого нужно удалить
-     * @return - true если клиент был удален, иначе false
      */
-    boolean delete(Long id);
+    void delete(Long id);
 }

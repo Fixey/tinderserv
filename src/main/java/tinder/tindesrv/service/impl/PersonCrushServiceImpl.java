@@ -1,10 +1,12 @@
 package tinder.tindesrv.service.impl;
 
+import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tinder.tindesrv.dto.PersonCrushDto;
 import tinder.tindesrv.entity.PersonCrush;
-import tinder.tindesrv.exceptions.NotFountException;
+import tinder.tindesrv.exceptions.CreatePersonException;
+import tinder.tindesrv.exceptions.NotFoundException;
 import tinder.tindesrv.mapping.PersonCrushMapper;
 import tinder.tindesrv.repository.PersonCrushRepository;
 import tinder.tindesrv.service.PersonCrushService;
@@ -29,7 +31,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
         return personCrushRepository
                 .findById(id)
                 .map(mapper::toDto)
-                .orElseThrow(NotFountException::new);
+                .orElseThrow(NotFoundException::new);
     }
 
     /**
@@ -38,7 +40,7 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @return список клиентов
      */
     @Override
-    public List<PersonCrushDto> readAll() {
+    public @NotNull List<PersonCrushDto> readAll() {
         return personCrushRepository.findAll()
                 .stream()
                 .map(mapper::toDto)
@@ -52,8 +54,10 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param crushId - id любимца
      */
     public List<PersonCrushDto> getUserAndCrush(Long userId, Long crushId) {
-        return personCrushRepository.findByUserIdInAndCrushIdIn(List.of(userId, crushId), List.of(crushId, userId))
+        List<Long> listid = List.of(userId, crushId);
+        return personCrushRepository.findByUserIdInAndCrushIdIn(listid, listid)
                 .stream()
+                .map(personCrush -> personCrush.orElseThrow(NotFoundException::new))
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -73,31 +77,32 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * Создает нового клиента
      *
      * @param personCrushDto - клиент для создания
+     * @return PersonCrushDto - новый клиент
+     * @throws CreatePersonException - если не смог создать клиента
      */
     @Override
-    public PersonCrushDto create(PersonCrushDto personCrushDto) {
-        PersonCrushDto savingPersonCrushDto = null;
-        if (!existLikeByCrush(personCrushDto.getUserId(), personCrushDto.getCrushId())) {
-            PersonCrush personCrush = mapper.toEntity(personCrushDto);
-            PersonCrush savingPersonCrush = personCrushRepository.save(personCrush);
-            savingPersonCrushDto = mapper.toDto(savingPersonCrush);
+    public PersonCrushDto upsert(PersonCrushDto personCrushDto) {
+        try {
+            PersonCrushDto savingPersonCrushDto = null;
+            if (!existLikeByCrush(personCrushDto.getUserId(), personCrushDto.getCrushId())) {
+                PersonCrush personCrush = mapper.toEntity(personCrushDto);
+                PersonCrush savingPersonCrush = personCrushRepository.save(personCrush);
+                savingPersonCrushDto = mapper.toDto(savingPersonCrush);
+            }
+            return savingPersonCrushDto;
+        } catch (RuntimeException e) {
+            throw new CreatePersonException();
         }
-        return savingPersonCrushDto;
     }
 
     /**
      * Удаляет клиента с заданным ID
      *
      * @param id - id клиента, которого нужно удалить
-     * @return - true если клиент был удален, иначе false
      */
     @Override
-    public boolean delete(Long id) {
-        if (personCrushRepository.existsById(id)) {
-            personCrushRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void delete(Long id) {
+        personCrushRepository.deleteById(id);
     }
 
     /**
@@ -107,8 +112,6 @@ public class PersonCrushServiceImpl implements PersonCrushService {
      * @param crushId id любимца
      */
     public void deleteLike(Long userId, Long crushId) {
-        if (existLikeByCrush(userId, crushId)) {
-            personCrushRepository.deleteByUserIdAndCrushId(userId, crushId);
-        }
+        personCrushRepository.deleteByUserIdAndCrushId(userId, crushId);
     }
 }

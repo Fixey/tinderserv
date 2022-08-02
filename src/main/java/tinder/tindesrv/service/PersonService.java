@@ -25,7 +25,7 @@ public interface PersonService {
      *
      * @param person - клиент для создания
      */
-    PersonDto create(PersonDto person);
+    PersonDto upsert(PersonDto person);
 
 
     /**

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tinder.tindesrv.enums.CrushTypeEnum;
+import tinder.tindesrv.enums.GenderTypeEnum;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,6 @@ public class Person {
     @Enumerated(EnumType.STRING)
     private CrushTypeEnum crush;
     @Enumerated(EnumType.STRING)
-    private CrushTypeEnum gender;
+    private GenderTypeEnum gender;
     private String description;
 }

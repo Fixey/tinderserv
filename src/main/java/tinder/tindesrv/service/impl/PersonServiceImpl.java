@@ -1,11 +1,13 @@
 package tinder.tindesrv.service.impl;
 
+import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tinder.tindesrv.dto.PersonDto;
 import tinder.tindesrv.entity.Person;
 import tinder.tindesrv.enums.CrushTypeEnum;
-import tinder.tindesrv.exceptions.NotFountException;
+import tinder.tindesrv.enums.GenderTypeEnum;
+import tinder.tindesrv.exceptions.NotFoundException;
 import tinder.tindesrv.mapping.PersonMapper;
 import tinder.tindesrv.repository.PersonRepository;
 import tinder.tindesrv.service.PersonService;
@@ -31,7 +33,7 @@ public class PersonServiceImpl implements PersonService {
         return personRepository
                 .findById(id)
                 .map(personMapper::toDto)
-                .orElseThrow(NotFountException::new);
+                .orElseThrow(NotFoundException::new);
     }
 
     /**
@@ -40,7 +42,7 @@ public class PersonServiceImpl implements PersonService {
      * @return список клиентов
      */
     @Override
-    public List<PersonDto> readAll() {
+    public @NotNull List<PersonDto> readAll() {
         return personRepository.findAll()
                 .stream()
                 .map(personMapper::toDto)
@@ -55,16 +57,17 @@ public class PersonServiceImpl implements PersonService {
      */
     public List<PersonDto> getPersonsByGender(Long id) {
         PersonDto person = read(id);
-        List<CrushTypeEnum> crushTypeList = new ArrayList<>();
+        List<GenderTypeEnum> crushTypeList = new ArrayList<>();
         if (person.getCrush().equals(CrushTypeEnum.ALL)) {
-            crushTypeList.add(CrushTypeEnum.MEN);
-            crushTypeList.add(CrushTypeEnum.WOMEN);
+            crushTypeList.add(GenderTypeEnum.MEN);
+            crushTypeList.add(GenderTypeEnum.WOMEN);
         } else {
-            crushTypeList.add(person.getCrush());
+            crushTypeList.add(GenderTypeEnum.valueOf(person.getCrush().name()));
         }
         return personRepository
-                .findByGender(crushTypeList, person.getGender())
+                .findByGender(crushTypeList, CrushTypeEnum.valueOf(person.getGender().name()))
                 .stream()
+                .map(per -> per.orElseThrow(NotFoundException::new))
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -78,6 +81,7 @@ public class PersonServiceImpl implements PersonService {
     public List<PersonDto> getPersonsForLovers(Long userId) {
         return personRepository.getLovers(userId, userId)
                 .stream()
+                .map(person -> person.orElseThrow(NotFoundException::new))
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -88,7 +92,7 @@ public class PersonServiceImpl implements PersonService {
      * @param personDto - клиент для создания
      */
     @Override
-    public PersonDto create(PersonDto personDto) {
+    public PersonDto upsert(PersonDto personDto) {
         Person person = personMapper.toEntity(personDto);
         Person savingPerson = personRepository.save(person);
         return personMapper.toDto(savingPerson);
@@ -101,8 +105,6 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public void delete(Long id) {
-        if (personRepository.existsById(id)) {
-            personRepository.deleteById(id);
-        }
+        personRepository.deleteById(id);
     }
 }

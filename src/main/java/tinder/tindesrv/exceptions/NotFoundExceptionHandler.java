@@ -9,11 +9,11 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class GlobalRestExceptionHandler {
-    @ExceptionHandler({Exception.class})
+public class NotFoundExceptionHandler {
+    @ExceptionHandler(value = NotFoundException.class)
     public ApiError handleAll(Exception ex, WebRequest request) {
         return ApiError.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.NOT_FOUND)
                 .message(ex.getLocalizedMessage())
                 .stackTrace(Arrays.stream(ex.getStackTrace())
                         .map(StackTraceElement::toString)

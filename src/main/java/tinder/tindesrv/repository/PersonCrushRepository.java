@@ -6,6 +6,7 @@ import tinder.tindesrv.entity.PersonCrush;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> {
@@ -42,7 +43,7 @@ public interface PersonCrushRepository extends JpaRepository<PersonCrush, Long> 
      * @param crushId id любимцев
      * @return List<PersonCrush> лист связей
      */
-    List<PersonCrush> findByUserIdInAndCrushIdIn(List<Long> userId, List<Long> crushId);
+    List<Optional<PersonCrush>> findByUserIdInAndCrushIdIn(List<Long> userId, List<Long> crushId);
 
     /**
      * Есть ли связь между клиентом и любимцем
