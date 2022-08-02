@@ -55,15 +55,15 @@ public class PersonServiceImpl implements PersonService {
      */
     public List<PersonDto> getPersonsByGender(Long id) {
         PersonDto person = read(id);
-        List<String> crushTypeList = new ArrayList<>();
+        List<CrushTypeEnum> crushTypeList = new ArrayList<>();
         if (person.getCrush().equals(CrushTypeEnum.ALL)) {
-            crushTypeList.add(CrushTypeEnum.MEN.name());
-            crushTypeList.add(CrushTypeEnum.WOMEN.name());
+            crushTypeList.add(CrushTypeEnum.MEN);
+            crushTypeList.add(CrushTypeEnum.WOMEN);
         } else {
-            crushTypeList.add(person.getCrush().name());
+            crushTypeList.add(person.getCrush());
         }
         return personRepository
-                .findByGender(crushTypeList, person.getGender().name())
+                .findByGender(crushTypeList, person.getGender())
                 .stream()
                 .map(personMapper::toDto)
                 .collect(Collectors.toList());
