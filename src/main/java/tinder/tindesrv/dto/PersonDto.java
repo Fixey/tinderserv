@@ -18,9 +18,7 @@ public class PersonDto {
     private Long id;
     private String fullName;
     private LocalDate birthdate;
-    @Enumerated(EnumType.STRING)
     private CrushTypeEnum crush;
-    @Enumerated(EnumType.STRING)
     private CrushTypeEnum gender;
     private String description;
 }
